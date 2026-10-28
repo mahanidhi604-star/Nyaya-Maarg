@@ -232,8 +232,8 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <button
             onClick={() => setSelectedCaseId(null)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
-            style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-primary)' }}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
           >
             <ArrowLeft size={16} />
             {lang === 'kn' ? 'ಎಲ್ಲಾ ಪ್ರಕರಣಗಳು' : 'All Cases'}
@@ -242,8 +242,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
           <div className="flex items-center gap-3">
             {activeCase.is_demo && (
               <span
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
-                style={{ background: 'var(--color-status-warning-bg)', color: 'var(--color-status-warning-ink)' }}
+                className="status-badge-warning inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
               >
                 <Info size={14} weight="bold" />
                 DEMO CASE
@@ -251,7 +250,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
             )}
             <button
               onClick={() => handleDeleteCase(activeCase.id)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 border border-red-200 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+              className="status-badge-danger flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
             >
               <Trash size={15} />
               {lang === 'kn' ? 'ಪ್ರಕರಣ ಅಳಿಸಿ' : 'Delete Case'}
@@ -261,27 +260,27 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
         {/* Case File Header Card */}
         <div
-          className="p-6 rounded-2xl border mb-6 shadow-xs"
-          style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-surface-2)' }}
+          className="p-6 rounded-2xl border mb-6 shadow-xs surface-card"
+          style={{ borderColor: 'var(--color-border-subtle)' }}
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-xs font-mono font-semibold uppercase px-2 py-0.5 rounded bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="status-badge-info text-xs font-mono font-bold uppercase px-2.5 py-0.5 rounded">
                   {activeCase.workflow_type}
                 </span>
-                <span className="text-xs font-medium text-neutral-500">
-                  Authority: <strong>{activeCase.authority_forum}</strong>
+                <span className="text-xs font-medium" style={{ color: 'var(--color-ink-secondary)' }}>
+                  Authority: <strong style={{ color: 'var(--color-ink-primary)' }}>{activeCase.authority_forum}</strong>
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
+              <h1 className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 {activeCase.title}
               </h1>
             </div>
 
             {/* Stage Selector Pill */}
-            <div className="flex items-center gap-1.5 p-1 rounded-lg border bg-white dark:bg-neutral-900 border-neutral-300 dark:border-neutral-700">
-              <span className="text-xs font-semibold px-2 text-neutral-500">Stage:</span>
+            <div className="flex items-center gap-2 p-1.5 rounded-lg border surface-muted" style={{ borderColor: 'var(--color-border-strong)' }}>
+              <span className="text-xs font-semibold px-1" style={{ color: 'var(--color-ink-secondary)' }}>Stage:</span>
               <select
                 value={activeCase.stage}
                 onChange={async (e) => {
@@ -289,7 +288,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                   await saveUserCase({ ...activeCase, stage: updatedStage }, userId);
                   await loadCases();
                 }}
-                className="text-xs font-semibold bg-transparent outline-none cursor-pointer py-1 pr-2 text-teal-800 dark:text-teal-300"
+                className="input-control text-xs font-semibold py-1 px-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
               >
                 {STAGES.map((s) => (
                   <option key={s.stage} value={s.stage}>
@@ -302,8 +301,8 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
           {/* Notes & Guidance */}
           {activeCase.notes && (
-            <div className="mt-4 p-3.5 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200/80 dark:border-neutral-700/80 text-sm">
-              <span className="text-[11px] font-mono font-semibold uppercase text-neutral-400 block mb-1">
+            <div className="mt-4 p-4 rounded-xl border text-sm" style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-border-subtle)' }}>
+              <span className="text-[11px] font-mono font-semibold uppercase block mb-1" style={{ color: 'var(--color-ink-secondary)' }}>
                 Private Case Notes:
               </span>
               <p className="leading-relaxed" style={{ color: 'var(--color-ink-primary)' }}>
@@ -313,13 +312,13 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
           )}
 
           {/* Next Step Recommendation Card */}
-          <div className="mt-4 p-4 rounded-xl border border-teal-200 bg-teal-50/50 dark:bg-teal-950/20 dark:border-teal-900 flex items-start gap-3">
-            <Scales size={20} className="text-teal-700 dark:text-teal-400 shrink-0 mt-0.5" />
+          <div className="mt-4 p-4 rounded-xl border status-badge-info flex items-start gap-3">
+            <Scales size={20} className="shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300">
+              <h4 className="text-xs font-bold uppercase tracking-wider">
                 Recommended Procedural Next Step:
               </h4>
-              <p className="text-xs sm:text-sm text-teal-950 dark:text-teal-200 mt-0.5 leading-relaxed">
+              <p className="text-xs sm:text-sm mt-1 leading-relaxed">
                 {activeCase.stage === 'Preparing' && 'Draft your formal statement of claim and prepare photocopies of all supporting agreements/receipts.'}
                 {activeCase.stage === 'Filed' && 'Track physical postal acknowledgement or forum diary number. Monitor upcoming summons or hearing dates.'}
                 {(activeCase.stage === 'Hearing' || activeCase.stage === 'Hearing/Follow-up') && 'Attend scheduled hearing or mediation session. Present clean copies of documents to the presiding member.'}
@@ -332,20 +331,20 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
         {/* Timeline of Events */}
         <div
-          className="p-6 rounded-2xl border"
-          style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-surface-2)' }}
+          className="p-6 rounded-2xl border surface-card"
+          style={{ borderColor: 'var(--color-border-subtle)' }}
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <Clock size={20} className="text-teal-600" />
-              <h2 className="text-lg font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
+              <Clock size={20} style={{ color: 'var(--color-accent)' }} />
+              <h2 className="text-lg font-bold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 {lang === 'kn' ? 'ಪ್ರಕರಣದ ಘಟನೆಗಳ ಕಾಲಗತಿ' : 'Case Timeline & Key Dates'}
               </h2>
             </div>
             <button
               onClick={() => setShowAddEventModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-90"
-              style={{ background: 'var(--color-accent)' }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+              style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
             >
               <Plus size={15} weight="bold" />
               {lang === 'kn' ? 'ಘಟನೆ / ದಿನಾಂಕ ಸೇರಿಸಿ' : 'Add Event / Date'}
@@ -354,39 +353,41 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
           {/* Events List */}
           {sortedEvents.length === 0 ? (
-            <div className="py-8 text-center border-2 border-dashed rounded-xl border-neutral-200 dark:border-neutral-700">
-              <Calendar size={32} className="mx-auto text-neutral-400 mb-2" />
-              <p className="text-sm text-neutral-500 font-medium">No recorded events or hearing dates yet.</p>
+            <div className="py-8 text-center border-2 border-dashed rounded-xl" style={{ borderColor: 'var(--color-border-strong)' }}>
+              <Calendar size={32} className="mx-auto mb-2" style={{ color: 'var(--color-ink-tertiary)' }} />
+              <p className="text-sm font-medium" style={{ color: 'var(--color-ink-secondary)' }}>No recorded events or hearing dates yet.</p>
               <button
                 onClick={() => setShowAddEventModal(true)}
-                className="mt-3 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
+                className="mt-3 text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] rounded"
+                style={{ color: 'var(--color-accent-text)' }}
               >
                 + Add your first hearing or filing date
               </button>
             </div>
           ) : (
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-neutral-200 dark:before:bg-neutral-700">
+            <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-[var(--color-border-strong)]">
               {sortedEvents.map((ev) => {
                 const isOverdue = new Date(ev.date).getTime() < Date.now();
                 return (
                   <div key={ev.id} className="relative group">
-                    <div className="absolute -left-6 top-1.5 w-3 h-3 rounded-full border-2 border-white dark:border-neutral-900 bg-teal-600" />
-                    <div className="p-4 rounded-xl border bg-neutral-50 dark:bg-neutral-800/60 border-neutral-200 dark:border-neutral-700 transition-all hover:shadow-xs">
+                    <div className="absolute -left-6 top-1.5 w-3 h-3 rounded-full border-2 bg-[var(--color-accent)]" style={{ borderColor: 'var(--color-surface-1)' }} />
+                    <div className="p-4 rounded-xl border transition-all surface-card hover:shadow-xs" style={{ borderColor: 'var(--color-border-subtle)' }}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
+                          <span className="status-badge-info text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded">
                             {ev.type}
                           </span>
-                          <h4 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{ev.title}</h4>
+                          <h4 className="text-sm font-bold" style={{ color: 'var(--color-ink-primary)' }}>{ev.title}</h4>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`text-xs font-mono font-medium ${isOverdue ? 'text-amber-600 dark:text-amber-400' : 'text-neutral-500'}`}>
+                          <span className={`text-xs font-mono font-semibold ${isOverdue ? 'status-badge-danger px-1.5 py-0.5 rounded' : ''}`} style={{ color: isOverdue ? undefined : 'var(--color-ink-secondary)' }}>
                             {ev.date} {isOverdue && '(Past)'}
                           </span>
                           <button
                             onClick={() => downloadEventIcs(ev, activeCase.title)}
                             title="Export to Calendar (.ics)"
-                            className="p-1 rounded text-neutral-500 hover:text-teal-600 transition-colors"
+                            className="p-1 rounded transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                            style={{ color: 'var(--color-ink-secondary)' }}
                           >
                             <Calendar size={16} />
                           </button>
@@ -396,13 +397,14 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                               await loadCases();
                             }}
                             title="Delete event"
-                            className="p-1 rounded text-neutral-400 hover:text-red-600 transition-colors"
+                            className="p-1 rounded transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                            style={{ color: 'var(--color-status-danger)' }}
                           >
                             <Trash size={15} />
                           </button>
                         </div>
                       </div>
-                      {ev.notes && <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-400">{ev.notes}</p>}
+                      {ev.notes && <p className="mt-2 text-xs leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>{ev.notes}</p>}
                     </div>
                   </div>
                 );
@@ -413,18 +415,18 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
         {/* Modal: Add Event */}
         {showAddEventModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-            <div className="w-full max-w-md p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xl">
-              <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'var(--font-serif)' }}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+            <div className="w-full max-w-md p-6 rounded-2xl surface-card shadow-xl" style={{ borderColor: 'var(--color-border-strong)' }}>
+              <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 Add Timeline Event / Deadline
               </h3>
               <form onSubmit={handleAddEvent} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">Event Type</label>
+                  <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Event Type</label>
                   <select
                     value={eventType}
                     onChange={(e) => setEventType(e.target.value as CaseEvent['type'])}
-                    className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                    className="input-control w-full px-3 py-2 text-sm"
                   >
                     <option value="hearing">Hearing / Session</option>
                     <option value="filed">Notice or Claim Dispatched</option>
@@ -434,47 +436,49 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">Title</label>
+                  <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Title</label>
                   <input
                     type="text"
                     required
                     value={eventTitle}
                     onChange={(e) => setEventTitle(e.target.value)}
                     placeholder="e.g., First hearing before District Consumer Forum"
-                    className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                    className="input-control w-full px-3 py-2 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">Date</label>
+                  <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Date</label>
                   <input
                     type="date"
                     required
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                    className="input-control w-full px-3 py-2 text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">Notes (Optional)</label>
+                  <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Notes (Optional)</label>
                   <textarea
                     rows={2}
                     value={eventNotes}
                     onChange={(e) => setEventNotes(e.target.value)}
                     placeholder="Brief notes, room number, or what to bring..."
-                    className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                    className="input-control w-full px-3 py-2 text-sm"
                   />
                 </div>
-                <div className="flex items-center justify-end gap-3 pt-3 border-t">
+                <div className="flex items-center justify-end gap-3 pt-3 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
                   <button
                     type="button"
                     onClick={() => setShowAddEventModal(false)}
-                    className="px-4 py-2 rounded-lg text-xs font-medium border"
+                    className="px-4 py-2 rounded-lg text-xs font-medium border hover:bg-[var(--color-surface-2)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                    style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)' }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800"
+                    className="px-4 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                    style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                   >
                     Save Event
                   </button>
@@ -493,13 +497,13 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
       {/* Top Header & Privacy Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+          <span className="status-badge-info text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block">
             {lang === 'kn' ? 'ಪ್ರಕರಣ ಟ್ರ್ಯಾಕರ್' : 'Confidential Case File'}
           </span>
-          <h1 className="text-3xl font-bold mt-1" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em' }}>
+          <h1 className="text-3xl font-bold mt-2" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em', color: 'var(--color-ink-primary)' }}>
             {lang === 'kn' ? 'ನನ್ನ ಪ್ರಕರಣಗಳು ಮತ್ತು ದಿನಾಂಕಗಳು' : 'My Cases & Deadlines'}
           </h1>
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-secondary)' }}>
             {lang === 'kn'
               ? 'ನಿಮ್ಮ ಸ್ವಂತ ಖಾತೆಗೆ ಸೀಮಿತವಾದ ಸುರಕ್ಷಿತ ಶೇಖರಣೆ (Row-Level Security).'
               : 'Stored with strict Row-Level Security. Never mixed into public insights.'}
@@ -509,8 +513,8 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => exportAllCasesJSON(userId)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
-            style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-primary)' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border hover:bg-[var(--color-surface-2)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
             title="Export all my case files as JSON"
           >
             <DownloadSimple size={15} />
@@ -518,16 +522,16 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
           </button>
           <button
             onClick={() => setShowPrivacyModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
-            style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-primary)' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border hover:bg-[var(--color-surface-2)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
           >
-            <ShieldCheck size={15} className="text-teal-600" />
+            <ShieldCheck size={15} style={{ color: 'var(--color-accent)' }} />
             Privacy Notice
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-90"
-            style={{ background: 'var(--color-accent)' }}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           >
             <Plus size={15} weight="bold" />
             {lang === 'kn' ? 'ಹೊಸ ಪ್ರಕರಣ' : 'Track New Case'}
@@ -538,12 +542,12 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
       {/* Upcoming Deadlines Strip */}
       {upcomingDeadlines.length > 0 && (
         <div
-          className="mb-8 p-4 rounded-xl border shadow-xs"
-          style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-surface-2)' }}
+          className="mb-8 p-4 rounded-xl border shadow-xs surface-card"
+          style={{ borderColor: 'var(--color-border-subtle)' }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <Bell size={18} className="text-amber-600" />
-            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-700 dark:text-neutral-300">
+            <Bell size={18} style={{ color: 'var(--color-status-warning)' }} />
+            <h3 className="text-xs font-mono font-semibold uppercase tracking-wider" style={{ color: 'var(--color-ink-secondary)' }}>
               Upcoming Deadlines & Hearing Dates:
             </h3>
           </div>
@@ -554,23 +558,23 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                 onClick={() => setSelectedCaseId(dl.caseId)}
                 className={`p-3 rounded-lg border cursor-pointer transition-all hover:scale-[1.01] ${
                   dl.isOverdue
-                    ? 'border-red-300 bg-red-50/70 dark:bg-red-950/30 dark:border-red-900'
-                    : 'border-neutral-200 bg-white dark:bg-neutral-900 dark:border-neutral-700'
+                    ? 'status-badge-danger'
+                    : 'surface-card border-[var(--color-border-subtle)]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h5 className="text-xs font-bold line-clamp-1">{dl.caseTitle}</h5>
+                  <h5 className="text-xs font-bold line-clamp-1" style={{ color: dl.isOverdue ? undefined : 'var(--color-ink-primary)' }}>{dl.caseTitle}</h5>
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
                       dl.isOverdue
-                        ? 'bg-red-200 text-red-900 dark:bg-red-900 dark:text-red-200'
-                        : 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200'
+                        ? 'status-badge-danger border'
+                        : 'status-badge-info'
                     }`}
                   >
-                    {dl.isOverdue ? 'OVERDUE' : `${dl.daysRemaining}d left`}
+                    {dl.isOverdue ? '⚠️ OVERDUE' : `${dl.daysRemaining}d left`}
                   </span>
                 </div>
-                <p className="text-[11px] font-mono text-neutral-500 mt-1">{dl.date}</p>
+                <p className="text-[11px] font-mono mt-1" style={{ color: dl.isOverdue ? undefined : 'var(--color-ink-secondary)' }}>{dl.date}</p>
               </div>
             ))}
           </div>
@@ -578,32 +582,35 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
       )}
 
       {/* Stage Filter Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 text-xs font-medium border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 text-xs font-medium border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
         <button
           onClick={() => setStageFilter('all')}
-          className={`px-3 py-1.5 rounded-lg transition-colors ${
+          className={`px-3 py-1.5 rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] ${
             stageFilter === 'all'
-              ? 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 font-semibold'
-              : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+              ? 'status-badge-info font-bold'
+              : 'hover:bg-[var(--color-surface-2)]'
           }`}
+          style={{ color: stageFilter === 'all' ? undefined : 'var(--color-ink-secondary)' }}
         >
           All Stages ({cases.length})
         </button>
         {STAGES.map((s) => {
           const count = cases.filter((c) => c.stage === s.stage).length;
+          const isActive = stageFilter === s.stage;
           return (
             <button
               key={s.stage}
               onClick={() => setStageFilter(s.stage)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap ${
-                stageFilter === s.stage
-                  ? 'bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300 font-semibold'
-                  : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] ${
+                isActive
+                  ? 'status-badge-info font-bold'
+                  : 'hover:bg-[var(--color-surface-2)]'
               }`}
+              style={{ color: isActive ? undefined : 'var(--color-ink-secondary)' }}
             >
               <span>{s.icon}</span>
               <span>{lang === 'kn' ? s.label_kn : s.label}</span>
-              <span className="font-mono text-[10px] opacity-75">({count})</span>
+              <span className="font-mono text-[10px] opacity-80">({count})</span>
             </button>
           );
         })}
@@ -611,12 +618,12 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
       {/* Case Cards Grid or Empty State */}
       {filteredCases.length === 0 ? (
-        <div className="py-16 text-center rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 p-8">
-          <Folder size={48} className="mx-auto text-neutral-400 mb-3" />
-          <h3 className="text-lg font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
+        <div className="py-16 text-center rounded-2xl border border-dashed p-8 surface-card" style={{ borderColor: 'var(--color-border-strong)' }}>
+          <Folder size={48} className="mx-auto mb-3" style={{ color: 'var(--color-ink-tertiary)' }} />
+          <h3 className="text-lg font-bold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
             {lang === 'kn' ? 'ಯಾವುದೇ ಪ್ರಕರಣಗಳು ದಾಖಲಾಗಿಲ್ಲ' : 'No tracked legal cases in this view'}
           </h3>
-          <p className="mt-1 text-sm text-neutral-500 max-w-md mx-auto">
+          <p className="mt-1 text-sm max-w-md mx-auto" style={{ color: 'var(--color-ink-secondary)' }}>
             {lang === 'kn'
               ? 'ಮಾರ್ಗದರ್ಶಿತ ಕಾರ್ಯವಿಧಾನವನ್ನು ಆಯ್ಕೆ ಮಾಡುವ ಮೂಲಕ ಅಥವಾ ನೇರವಾಗಿ ಹೊಸ ಪ್ರಕರಣವನ್ನು ರಚಿಸುವ ಮೂಲಕ ಪ್ರಾರಂಭಿಸಿ.'
               : 'Track deadlines, hearing dates, and required documents. You can also start directly from any guided workflow.'}
@@ -624,15 +631,15 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 rounded-lg text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-90"
-              style={{ background: 'var(--color-accent)' }}
+              className="px-4 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+              style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
             >
               + Create Blank Case File
             </button>
             <button
               onClick={onNavigateToWorkflows}
-              className="px-4 py-2 rounded-lg text-xs font-medium border transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
-              style={{ borderColor: 'var(--color-surface-2)' }}
+              className="px-4 py-2 rounded-lg text-xs font-medium border transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+              style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
             >
               Browse Guided Workflows →
             </button>
@@ -648,43 +655,41 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
               <div
                 key={c.id}
                 onClick={() => setSelectedCaseId(c.id)}
-                className="rounded-2xl border p-5 cursor-pointer flex flex-col justify-between transition-all hover:shadow-md hover:border-teal-400"
-                style={{
-                  background: 'var(--color-surface-1)',
-                  borderColor: 'var(--color-surface-2)',
-                }}
+                className="rounded-2xl border p-5 cursor-pointer flex flex-col justify-between transition-all hover:shadow-md surface-card"
+                style={{ borderColor: 'var(--color-border-subtle)' }}
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
-                      {stageConfig.icon} {c.stage}
+                    <span className="status-badge-info text-[11px] font-mono font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                      <span>{stageConfig.icon}</span>
+                      <span>{c.stage}</span>
                     </span>
                     {c.is_demo && (
-                      <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400">
+                      <span className="status-badge-warning text-[10px] font-semibold px-2 py-0.5 rounded-full">
                         DEMO
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-base font-bold line-clamp-2" style={{ fontFamily: 'var(--font-serif)' }}>
+                  <h3 className="text-base font-bold line-clamp-2" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                     {c.title}
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-1 line-clamp-1">
+                  <p className="text-xs mt-1 line-clamp-1" style={{ color: 'var(--color-ink-secondary)' }}>
                     Forum: {c.authority_forum}
                   </p>
 
                   {c.notes && (
-                    <p className="mt-3 text-xs text-neutral-600 dark:text-neutral-400 line-clamp-2">
+                    <p className="mt-3 text-xs line-clamp-2" style={{ color: 'var(--color-ink-secondary)' }}>
                       {c.notes}
                     </p>
                   )}
                 </div>
 
-                <div className="mt-5 pt-3 border-t flex items-center justify-between text-xs" style={{ borderColor: 'var(--color-surface-2)' }}>
-                  <span className="font-mono text-[11px] text-neutral-500">
+                <div className="mt-5 pt-3 border-t flex items-center justify-between text-xs" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                  <span className="font-mono text-[11px]" style={{ color: 'var(--color-ink-secondary)' }}>
                     {nextDate ? `Deadline: ${nextDate}` : 'No date set'}
                   </span>
-                  <span className="font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-1">
+                  <span className="font-semibold flex items-center gap-1" style={{ color: 'var(--color-accent-text)' }}>
                     View File <CaretRight size={12} weight="bold" />
                   </span>
                 </div>
@@ -696,19 +701,19 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
       {/* Modal: Create Case */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="w-full max-w-lg p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-serif)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg p-6 rounded-2xl surface-card shadow-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: 'var(--color-border-strong)' }}>
+            <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
               Create Confidential Case File
             </h3>
-            <p className="text-xs text-neutral-500 mb-5">
+            <p className="text-xs mb-5" style={{ color: 'var(--color-ink-secondary)' }}>
               Track deadlines, authority communications, and procedural documents.
             </p>
 
             <form onSubmit={handleCreateCase} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">
-                  Case Title <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>
+                  Case Title <span style={{ color: 'var(--color-status-danger)' }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -716,17 +721,17 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g., Koramangala Rental Deposit Dispute"
-                  className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none focus:ring-1 focus:ring-teal-600"
+                  className="input-control w-full px-3 py-2 text-sm"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">Workflow / Category</label>
+                  <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Workflow / Category</label>
                   <select
                     value={newWorkflowType}
                     onChange={(e) => setNewWorkflowType(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                    className="input-control w-full px-3 py-2 text-sm"
                   >
                     <option value="Rental Dispute">Rental Deposit Recovery</option>
                     <option value="Consumer Grievance">Consumer Protection Complaint</option>
@@ -737,11 +742,11 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">Current Stage</label>
+                  <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Current Stage</label>
                   <select
                     value={newStage}
                     onChange={(e) => setNewStage(e.target.value as CaseStage)}
-                    className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                    className="input-control w-full px-3 py-2 text-sm"
                   >
                     {STAGES.map((s) => (
                       <option key={s.stage} value={s.stage}>
@@ -753,7 +758,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">
+                <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>
                   Authority / Court / Forum
                 </label>
                 <input
@@ -761,24 +766,24 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                   value={newAuthority}
                   onChange={(e) => setNewAuthority(e.target.value)}
                   placeholder="e.g., District Consumer Forum (Bangalore Urban), DLSA Front Office"
-                  className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                  className="input-control w-full px-3 py-2 text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">
+                <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>
                   Next Deadline or Hearing Date
                 </label>
                 <input
                   type="date"
                   value={newDeadline}
                   onChange={(e) => setNewDeadline(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                  className="input-control w-full px-3 py-2 text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase text-neutral-500 mb-1">
+                <label className="block text-xs font-semibold uppercase mb-1" style={{ color: 'var(--color-ink-secondary)' }}>
                   Private Notes & Chronology
                 </label>
                 <textarea
@@ -786,11 +791,11 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                   value={newNotes}
                   onChange={(e) => handleNotesChange(e.target.value)}
                   placeholder="Summary of claims, notice dispatch date, opposite party communications..."
-                  className="w-full px-3 py-2 rounded-lg border text-sm bg-transparent outline-none"
+                  className="input-control w-full px-3 py-2 text-sm"
                 />
                 {piiDetected && (
-                  <div className="mt-2 p-3 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-900 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2">
-                    <Warning size={16} className="text-amber-600 mt-0.5 shrink-0" />
+                  <div className="mt-2 p-3 rounded-lg border status-badge-warning text-xs flex items-start gap-2">
+                    <Warning size={16} className="shrink-0 mt-0.5" />
                     <span>
                       <strong>Privacy Caution:</strong> We detected numbers resembling an Aadhaar number, PAN, or phone number. To protect your privacy, avoid saving sensitive personal identifiers in free text notes.
                     </span>
@@ -798,17 +803,19 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                 )}
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-medium border"
+                  className="px-4 py-2 rounded-lg text-xs font-medium border hover:bg-[var(--color-surface-2)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800"
+                  className="px-4 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                 >
                   Create Case File
                 </button>
@@ -820,35 +827,37 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
       {/* Modal: Privacy Notice */}
       {showPrivacyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="w-full max-w-md p-6 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xl">
-            <h3 className="text-lg font-bold mb-3" style={{ fontFamily: 'var(--font-serif)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md p-6 rounded-2xl surface-card shadow-xl" style={{ borderColor: 'var(--color-border-strong)' }}>
+            <h3 className="text-lg font-bold mb-3" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
               Data Storage & Privacy Policy
             </h3>
-            <div className="text-xs text-neutral-600 dark:text-neutral-400 space-y-2 leading-relaxed">
+            <div className="text-xs space-y-2 leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>
               <p>
-                <strong>Row-Level Security:</strong> When signed in, cases are stored in Supabase Postgres protected by strict SQL Row-Level Security (`auth.uid() = user_id`). No other account or admin can access your records.
+                <strong style={{ color: 'var(--color-ink-primary)' }}>Row-Level Security:</strong> When signed in, cases are stored in Supabase Postgres protected by strict SQL Row-Level Security (`auth.uid() = user_id`). No other account or admin can access your records.
               </p>
               <p>
-                <strong>Zero Analytics / Trackers:</strong> Nyaya-Maarg does not load third-party analytics, tracking pixels, or advertisement beacons.
+                <strong style={{ color: 'var(--color-ink-primary)' }}>Zero Analytics / Trackers:</strong> Nyaya-Maarg does not load third-party analytics, tracking pixels, or advertisement beacons.
               </p>
               <p>
-                <strong>Public Statistics Separation:</strong> Case data is private to you and is never aggregated into the public Insights statistics.
+                <strong style={{ color: 'var(--color-ink-primary)' }}>Public Statistics Separation:</strong> Case data is private to you and is never aggregated into public Insights statistics.
               </p>
               <p>
-                <strong>Data Portability & Erasure:</strong> You can export all your case records as JSON at any time or permanently purge all records.
+                <strong style={{ color: 'var(--color-ink-primary)' }}>Data Portability & Erasure:</strong> You can export all your case records as JSON at any time or permanently purge all records.
               </p>
             </div>
-            <div className="mt-5 pt-4 border-t flex items-center justify-between">
+            <div className="mt-5 pt-4 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border-subtle)' }}>
               <button
                 onClick={handleDeleteAll}
-                className="text-xs text-red-600 hover:underline font-medium"
+                className="text-xs hover:underline font-medium focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] rounded"
+                style={{ color: 'var(--color-status-danger)' }}
               >
                 Delete All My Cases
               </button>
               <button
                 onClick={() => setShowPrivacyModal(false)}
-                className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white bg-neutral-800 dark:bg-neutral-200 dark:text-neutral-900"
+                className="px-4 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
               >
                 Close
               </button>

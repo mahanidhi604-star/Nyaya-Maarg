@@ -231,13 +231,13 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Top Header */}
       <div className="text-center max-w-2xl mx-auto mb-8">
-        <span className="text-xs font-mono font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+        <span className="status-badge-info text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block">
           {lang === 'kn' ? 'ದಾಖಲೆ ವಿಶ್ಲೇಷಕ' : 'Plain-Language Document Interpreter'}
         </span>
-        <h1 className="text-3xl font-bold mt-1.5" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em' }}>
+        <h1 className="text-3xl font-bold mt-2" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em', color: 'var(--color-ink-primary)' }}>
           {lang === 'kn' ? 'ಕಾನೂನು ನೋಟಿಸ್ ಅಥವಾ ಪತ್ರದ ಸರಳ ವಿವರಣೆ' : 'Understand Legal Notices & Court Orders'}
         </h1>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>
           {lang === 'kn'
             ? 'ನೋಟಿಸ್ ಅಥವಾ ಪತ್ರದಲ್ಲಿ ಏನಿದೆ ಎಂದು ಸರಳ ಭಾಷೆಯಲ್ಲಿ ತಿಳಿಯಿರಿ. ಯಾವುದೇ ಕಾನೂನು ಸಲಹೆಯನ್ನಾಗಲಿ ಅಥವಾ ಫಲಿತಾಂಶದ ಮುನ್ಸೂಚನೆಯನ್ನಾಗಲಿ ನೀಡುವುದಿಲ್ಲ.'
             : 'Explains what your document says in simple words. Identifies deadlines, parties, and obligations with exact quotes. No outcome prediction.'}
@@ -246,12 +246,12 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
       {/* Input Section */}
       <div
-        className="p-6 rounded-2xl border mb-8 shadow-xs"
-        style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-surface-2)' }}
+        className="p-6 rounded-2xl border mb-8 shadow-xs surface-card"
+        style={{ borderColor: 'var(--color-border-subtle)' }}
       >
         {/* Sample Notices Picker */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-semibold text-neutral-500">Quick Samples:</span>
+          <span className="text-xs font-semibold" style={{ color: 'var(--color-ink-secondary)' }}>Quick Samples:</span>
           {SAMPLE_NOTICES.map((sample, idx) => (
             <button
               key={idx}
@@ -261,7 +261,8 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
                 setImageFileName(null);
                 setError(null);
               }}
-              className="text-xs px-2.5 py-1 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-teal-600 transition-colors"
+              className="text-xs px-2.5 py-1 rounded-md border transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+              style={{ borderColor: 'var(--color-border-strong)', background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)' }}
             >
               {sample.title.split(' ')[0]} {sample.title.split(' ')[1]}...
             </button>
@@ -270,7 +271,7 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
         {/* Text Input */}
         <div>
-          <label className="block text-xs font-mono font-semibold uppercase text-neutral-500 mb-1.5">
+          <label className="block text-xs font-mono font-semibold uppercase mb-1.5" style={{ color: 'var(--color-ink-secondary)' }}>
             Paste Notice / Agreement Text:
           </label>
           <textarea
@@ -278,14 +279,14 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Paste text of legal notice, summons, RTI reply, or tenancy letter here..."
-            className="w-full p-4 rounded-xl border text-sm bg-white dark:bg-neutral-900 border-neutral-300 dark:border-neutral-700 outline-none focus:ring-2 focus:ring-teal-600 transition-all font-mono"
+            className="input-control w-full p-4 text-sm font-mono"
           />
         </div>
 
         {/* Image / File Upload + Redaction Toggle */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 pt-4 border-t" style={{ borderColor: 'var(--color-surface-2)' }}>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-4 pt-4 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs font-semibold cursor-pointer bg-white dark:bg-neutral-900 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
+            <label className="flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs font-semibold cursor-pointer transition-colors hover:bg-[var(--color-surface-2)] focus-within:ring-2 focus-within:ring-[var(--color-focus-ring)]" style={{ borderColor: 'var(--color-border-strong)', background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)' }}>
               <UploadSimple size={16} />
               {imageFileName ? `Photo: ${imageFileName.slice(0, 15)}...` : 'Upload Notice Photo (JPEG/PNG)'}
               <input type="file" accept="image/*,.txt" onChange={handleFileUpload} className="hidden" />
@@ -296,7 +297,8 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
                   setImageBase64(null);
                   setImageFileName(null);
                 }}
-                className="text-xs text-red-500 hover:underline"
+                className="text-xs font-semibold hover:underline"
+                style={{ color: 'var(--color-status-danger)' }}
               >
                 Clear Photo
               </button>
@@ -307,7 +309,16 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setEnableRedaction(!enableRedaction)}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-teal-300 bg-teal-50/70 text-teal-800 dark:bg-teal-950/40 dark:border-teal-800 dark:text-teal-300"
+              className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] ${
+                enableRedaction
+                  ? 'status-badge-info'
+                  : 'hover:bg-[var(--color-surface-2)]'
+              }`}
+              style={{
+                borderColor: enableRedaction ? undefined : 'var(--color-border-strong)',
+                background: enableRedaction ? undefined : 'var(--color-surface-1)',
+                color: enableRedaction ? undefined : 'var(--color-ink-secondary)',
+              }}
             >
               <ShieldCheck size={16} />
               {enableRedaction ? 'Auto-Redaction Active' : 'Redaction Off'}
@@ -316,16 +327,16 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
         </div>
 
         {/* Pre-Send Privacy Notice */}
-        <div className="mt-4 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-xs text-neutral-600 dark:text-neutral-400 flex items-start gap-2">
-          <LockKey size={16} className="text-teal-600 shrink-0 mt-0.5" />
+        <div className="mt-4 p-3 rounded-xl border text-xs flex items-start gap-2" style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-border-subtle)', color: 'var(--color-ink-secondary)' }}>
+          <LockKey size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--color-accent)' }} />
           <span>
-            <strong>Pre-Send Notice:</strong> Document text is processed in memory via our stateless server proxy solely for plain-language interpretation. No uploaded documents or outputs are saved unless you explicitly save confirmed dates to your case file.
+            <strong style={{ color: 'var(--color-ink-primary)' }}>Pre-Send Notice:</strong> Document text is processed in memory via our stateless server proxy solely for plain-language interpretation. No uploaded documents or outputs are saved unless you explicitly save confirmed dates to your case file.
           </span>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mt-4 p-3 rounded-xl border border-red-300 bg-red-50 dark:bg-red-950/30 text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
+          <div className="mt-4 p-3 rounded-xl border status-badge-danger text-xs flex items-center gap-2">
             <Warning size={16} />
             {error}
           </div>
@@ -336,8 +347,8 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
           <button
             disabled={loading}
             onClick={handleInterpret}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white shadow-xs transition-opacity hover:opacity-90 disabled:opacity-50"
-            style={{ background: 'var(--color-accent)' }}
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold shadow-xs transition-opacity hover:opacity-90 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           >
             {loading ? (
               <>
@@ -359,9 +370,9 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
         <div className="space-y-6">
           {/* Emergency Alert (if triggered) */}
           {result.is_emergency && (
-            <div className="p-5 rounded-2xl border-2 border-red-500 bg-red-50 dark:bg-red-950/40 text-red-900 dark:text-red-200">
+            <div className="p-5 rounded-2xl border-2 status-badge-danger">
               <div className="flex items-start gap-3">
-                <Warning size={28} weight="fill" className="text-red-600 shrink-0" />
+                <Warning size={28} weight="fill" className="shrink-0" />
                 <div>
                   <h3 className="text-base font-bold uppercase tracking-wide">
                     Urgent / Emergency Safety Warning
@@ -380,27 +391,27 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
           {/* Document Breakdown Card */}
           <div
-            className="p-8 rounded-2xl border shadow-sm"
-            style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-surface-2)' }}
+            className="p-8 rounded-2xl border shadow-sm surface-card"
+            style={{ borderColor: 'var(--color-border-subtle)' }}
           >
             {/* Header / Type */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
               <div>
-                <span className="text-xs font-mono font-semibold uppercase text-teal-700 dark:text-teal-400">
+                <span className="text-xs font-mono font-bold uppercase" style={{ color: 'var(--color-accent-text)' }}>
                   Document Classification
                 </span>
-                <h2 className="text-2xl font-bold mt-1" style={{ fontFamily: 'var(--font-serif)' }}>
+                <h2 className="text-2xl font-bold mt-1" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                   {result.document_type}
                 </h2>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300">
+              <span className="status-badge-info px-3 py-1 rounded-full text-xs font-mono font-semibold uppercase">
                 Confidence: {result.confidence}
               </span>
             </div>
 
             {/* Plain-Language Explanation */}
-            <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-              <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-2">
+            <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+              <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-2" style={{ color: 'var(--color-ink-secondary)' }}>
                 What this document says in simple words:
               </h4>
               <p className="text-base leading-relaxed" style={{ color: 'var(--color-ink-primary)', fontFamily: 'var(--font-serif)' }}>
@@ -409,14 +420,14 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
             </div>
 
             {/* What you are being asked or told to do */}
-            <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-              <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-3">
+            <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+              <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--color-ink-secondary)' }}>
                 Required Actions / What is demanded of you:
               </h4>
               <ul className="space-y-2">
                 {(result.required_actions || result.simple_actions_required || []).map((act, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm">
-                    <span className="text-teal-600 font-bold">•</span>
+                  <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--color-ink-primary)' }}>
+                    <span className="font-bold shrink-0" style={{ color: 'var(--color-accent)' }}>•</span>
                     <span>{act}</span>
                   </li>
                 ))}
@@ -424,28 +435,29 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
             </div>
 
             {/* Key Dates & Deadlines with exact source snippets */}
-            <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
+            <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 flex items-center gap-2">
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--color-ink-secondary)' }}>
                   <Calendar size={16} />
                   Extracted Dates & Statutory Deadlines:
                 </h4>
-                <span className="text-[11px] text-neutral-400">Exact source quotes preserved</span>
+                <span className="text-[11px]" style={{ color: 'var(--color-ink-tertiary)' }}>Exact source quotes preserved</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {result.key_dates.map((kd, idx) => (
                   <div
                     key={idx}
-                    className="p-4 rounded-xl border bg-neutral-50 dark:bg-neutral-800/60 border-neutral-200 dark:border-neutral-700"
+                    className="p-4 rounded-xl border surface-card"
+                    style={{ borderColor: 'var(--color-border-subtle)' }}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100">{kd.label}</span>
-                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200">
+                      <span className="text-xs font-bold" style={{ color: 'var(--color-ink-primary)' }}>{kd.label}</span>
+                      <span className="status-badge-info font-mono text-xs font-semibold px-2 py-0.5 rounded">
                         {kd.date_iso}
                       </span>
                     </div>
-                    <p className="text-xs font-mono italic text-neutral-500 bg-white/70 dark:bg-neutral-900/60 p-2 rounded border border-neutral-200/60 dark:border-neutral-700/60">
+                    <p className="text-xs font-mono italic p-2 rounded border" style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-border-subtle)', color: 'var(--color-ink-secondary)' }}>
                       {kd.source_snippet}
                     </p>
                   </div>
@@ -454,19 +466,19 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
             </div>
 
             {/* Parties and Forum */}
-            <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-              <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
+            <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+              <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: 'var(--color-ink-secondary)' }}>
                 <Buildings size={16} />
                 Parties and Forum Named in Document:
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div className="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700">
-                  <span className="font-semibold text-neutral-500 block mb-1">Forum / Authority:</span>
-                  <p className="text-sm font-bold">{result.parties_and_forum.forum_or_authority || 'Not explicitly named'}</p>
+                <div className="p-3 rounded-lg border surface-card" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                  <span className="font-semibold block mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Forum / Authority:</span>
+                  <p className="text-sm font-bold" style={{ color: 'var(--color-ink-primary)' }}>{result.parties_and_forum.forum_or_authority || 'Not explicitly named'}</p>
                 </div>
-                <div className="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700">
-                  <span className="font-semibold text-neutral-500 block mb-1">Parties Identified:</span>
-                  <p className="text-sm font-medium">
+                <div className="p-3 rounded-lg border surface-card" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                  <span className="font-semibold block mb-1" style={{ color: 'var(--color-ink-secondary)' }}>Parties Identified:</span>
+                  <p className="text-sm font-medium" style={{ color: 'var(--color-ink-primary)' }}>
                     {result.parties_and_forum.parties?.join(' vs. ') || 'Unspecified opposite parties'}
                   </p>
                 </div>
@@ -475,16 +487,16 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
             {/* Glossary of Terms */}
             {result.glossary && result.glossary.length > 0 && (
-              <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
+              <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: 'var(--color-ink-secondary)' }}>
                   <BookOpen size={16} />
                   Plain-Language Legal Glossary:
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {result.glossary.map((g, gi) => (
-                    <div key={gi} className="p-3 rounded-lg border bg-neutral-50 dark:bg-neutral-800/40 border-neutral-200 dark:border-neutral-700">
-                      <h5 className="text-xs font-bold text-teal-800 dark:text-teal-300">{g.term}</h5>
-                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">{g.explanation}</p>
+                    <div key={gi} className="p-3 rounded-lg border surface-card" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                      <h5 className="text-xs font-bold" style={{ color: 'var(--color-accent-text)' }}>{g.term}</h5>
+                      <p className="text-xs mt-1" style={{ color: 'var(--color-ink-secondary)' }}>{g.explanation}</p>
                     </div>
                   ))}
                 </div>
@@ -493,15 +505,15 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
             {/* Questions to ask at a free legal aid clinic */}
             {result.questions_for_clinic && (
-              <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
+              <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: 'var(--color-ink-secondary)' }}>
                   <Question size={16} />
                   Suggested Questions to Ask at DLSA / Legal Clinic:
                 </h4>
                 <div className="space-y-2">
                   {result.questions_for_clinic.map((q, qi) => (
-                    <div key={qi} className="p-3 rounded-lg bg-teal-50/50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-900 text-xs text-teal-950 dark:text-teal-200 flex items-start gap-2">
-                      <span className="font-bold text-teal-700">Q{qi + 1}:</span>
+                    <div key={qi} className="p-3 rounded-lg border status-badge-info text-xs flex items-start gap-2">
+                      <span className="font-bold">Q{qi + 1}:</span>
                       <span>{q}</span>
                     </div>
                   ))}
@@ -511,15 +523,15 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
             {/* Unclear items or needs a lawyer */}
             {result.unclear_or_needs_lawyer && result.unclear_or_needs_lawyer.length > 0 && (
-              <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-2 flex items-center gap-2">
+              <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: 'var(--color-status-warning)' }}>
                   <Warning size={16} />
                   Items Requiring Professional Clarification:
                 </h4>
-                <ul className="space-y-1.5 text-xs text-neutral-600 dark:text-neutral-400">
+                <ul className="space-y-1.5 text-xs" style={{ color: 'var(--color-ink-secondary)' }}>
                   {result.unclear_or_needs_lawyer.map((un, ui) => (
                     <li key={ui} className="flex items-start gap-2">
-                      <span className="text-amber-600 font-bold">•</span>
+                      <span className="font-bold" style={{ color: 'var(--color-status-warning)' }}>•</span>
                       <span>{un}</span>
                     </li>
                   ))}
@@ -529,8 +541,8 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
             {/* Suggested Guided Workflows */}
             {result.suggested_workflow_ids && result.suggested_workflow_ids.length > 0 && (
-              <div className="py-6 border-b" style={{ borderColor: 'var(--color-surface-2)' }}>
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-3">
+              <div className="py-6 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-3" style={{ color: 'var(--color-ink-secondary)' }}>
                   Suggested Guided Workflow:
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -538,7 +550,7 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
                     <button
                       key={wId}
                       onClick={() => onNavigateToWorkflow(wId)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-teal-600 text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 transition-colors"
+                      className="status-badge-info flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold hover:opacity-90 transition-opacity focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
                     >
                       <span>Open Workflow: {wId.replace(/^wf-/, '').replace(/-/g, ' ')}</span>
                       <ArrowRight size={14} />
@@ -549,28 +561,29 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
             )}
 
             {/* Disclaimer */}
-            <div className="pt-6 text-xs text-neutral-500 leading-relaxed italic">
+            <div className="pt-6 text-xs leading-relaxed italic" style={{ color: 'var(--color-ink-tertiary)' }}>
               ⚖️ {result.disclaimer}
             </div>
           </div>
 
           {/* ================= HUMAN IN THE LOOP: CONFIRM DATES TO CASE ================= */}
           <div
-            className="p-6 rounded-2xl border bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 shadow-xs"
+            className="p-6 rounded-2xl border surface-card shadow-xs"
+            style={{ borderColor: 'var(--color-border-subtle)' }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <CheckCircle size={20} className="text-teal-600" />
-              <h3 className="text-base font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
+              <CheckCircle size={20} style={{ color: 'var(--color-status-success)' }} />
+              <h3 className="text-base font-bold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 Human-in-the-Loop Review: Confirm Dates to Case Timeline
               </h3>
             </div>
-            <p className="text-xs text-neutral-500 mb-4">
+            <p className="text-xs mb-4" style={{ color: 'var(--color-ink-secondary)' }}>
               Nothing is saved to your case automatically. Review or modify the extracted dates below, choose a target case file, and confirm.
             </p>
 
             <div className="space-y-3 mb-5">
               {confirmedDates.map((cd, cIdx) => (
-                <div key={cIdx} className="p-3 rounded-lg border bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 flex flex-wrap items-center justify-between gap-3">
+                <div key={cIdx} className="p-3 rounded-lg border surface-muted flex flex-wrap items-center justify-between gap-3" style={{ borderColor: 'var(--color-border-subtle)' }}>
                   <div className="flex-1 min-w-[200px]">
                     <input
                       type="text"
@@ -580,7 +593,7 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
                         copy[cIdx].label = e.target.value;
                         setConfirmedDates(copy);
                       }}
-                      className="text-xs font-bold w-full bg-transparent outline-none border-b border-dashed border-neutral-300 dark:border-neutral-600 pb-0.5"
+                      className="input-control text-xs font-bold w-full px-2 py-1"
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -592,13 +605,14 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
                         copy[cIdx].date_iso = e.target.value;
                         setConfirmedDates(copy);
                       }}
-                      className="text-xs font-mono px-2 py-1 rounded border bg-transparent outline-none"
+                      className="input-control text-xs font-mono px-2 py-1"
                     />
                     <button
                       onClick={() => {
                         setConfirmedDates(confirmedDates.filter((_, i) => i !== cIdx));
                       }}
-                      className="text-xs text-red-500 hover:underline px-1"
+                      className="text-xs font-semibold hover:underline px-1 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] rounded"
+                      style={{ color: 'var(--color-status-danger)' }}
                     >
                       Remove
                     </button>
@@ -608,13 +622,13 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
             </div>
 
             {/* Target Case Selector and Confirm Button */}
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-neutral-500">Save to Case:</span>
+                <span className="text-xs font-semibold" style={{ color: 'var(--color-ink-secondary)' }}>Save to Case:</span>
                 <select
                   value={targetCaseId}
                   onChange={(e) => setTargetCaseId(e.target.value)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-lg border bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 outline-none"
+                  className="input-control text-xs font-semibold px-3 py-1.5"
                 >
                   <option value="new">+ Create New Case from this Notice</option>
                   {userCases.map((uc) => (
@@ -627,21 +641,22 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
 
               <div className="flex items-center gap-3">
                 {saveSuccessMsg && (
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <span className="status-badge-success text-xs font-semibold px-2 py-1 rounded">
                     {saveSuccessMsg}
                   </span>
                 )}
                 <button
                   onClick={handleSaveToCase}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-90"
-                  style={{ background: 'var(--color-accent)' }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                 >
                   <Plus size={16} weight="bold" />
                   Confirm & Save Dates to Case
                 </button>
                 <button
                   onClick={onNavigateToCases}
-                  className="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
+                  className="text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] rounded"
+                  style={{ color: 'var(--color-accent-text)' }}
                 >
                   Go to Cases →
                 </button>

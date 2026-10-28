@@ -150,8 +150,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
         <div className="no-print flex flex-wrap items-center justify-between gap-4 mb-6">
           <button
             onClick={() => setSelectedWorkflowId(null)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
-            style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-primary)' }}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
           >
             <ArrowLeft size={16} />
             {lang === 'kn' ? 'ಎಲ್ಲಾ ಕಾರ್ಯವಿಧಾನಗಳು' : 'All Workflows'}
@@ -160,8 +160,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
           <div className="flex items-center gap-2">
             {activeWorkflow.is_sample && (
               <span
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold tracking-wide"
-                style={{ background: 'var(--color-status-warning-bg)', color: 'var(--color-status-warning-ink)' }}
+                className="status-badge-warning inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide"
               >
                 <Warning size={14} weight="bold" />
                 {lang === 'kn' ? 'ಮಾದರಿ ಮಾರ್ಗದರ್ಶಿ — ಪರಿಶೀಲನೆ ಬಾಕಿ' : 'SAMPLE — Needs Ground Verification'}
@@ -169,8 +168,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
             )}
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border shadow-xs transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
-              style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-primary)' }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border shadow-xs transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+              style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
             >
               <Printer size={16} />
               {lang === 'kn' ? 'ದಾಖಲೆ ಪಟ್ಟಿ ಮುದ್ರಿಸಿ' : 'Print Briefing Sheet'}
@@ -180,15 +179,15 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
 
         {/* Workflow Title Card */}
         <div
-          className="p-6 rounded-2xl border mb-8"
-          style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-surface-2)' }}
+          className="p-6 rounded-2xl border mb-8 surface-card"
+          style={{ borderColor: 'var(--color-border-subtle)' }}
         >
           <div className="flex items-start justify-between gap-4">
             <div>
-              <span className="text-xs font-mono font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider status-badge-info px-2.5 py-0.5 rounded-md inline-block">
                 {lang === 'kn' ? 'ಮಾರ್ಗದರ್ಶಿತ ಪ್ರಕ್ರಿಯೆ' : 'Standard Citizen Procedure'}
               </span>
-              <h1 className="text-2xl sm:text-3xl font-semibold mt-1" style={{ fontFamily: 'var(--font-serif)' }}>
+              <h1 className="text-2xl sm:text-3xl font-semibold mt-2" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 {lang === 'kn' && activeWorkflow.title_kn ? activeWorkflow.title_kn : activeWorkflow.title}
               </h1>
               <p className="mt-2 text-sm sm:text-base leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>
@@ -196,28 +195,28 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                   ? activeWorkflow.summary_kn || activeWorkflow.plain_language_summary_kn
                   : activeWorkflow.summary || activeWorkflow.plain_language_summary}
               </p>
-              <div className="mt-3 flex flex-wrap items-center gap-4 text-xs" style={{ color: 'var(--color-ink-secondary)' }}>
+              <div className="mt-3 flex flex-wrap items-center gap-4 text-xs" style={{ color: 'var(--color-ink-tertiary)' }}>
                 <span>
-                  <strong>{lang === 'kn' ? 'ಯಾರಿಗಾಗಿ:' : 'Who it is for:'}</strong>{' '}
+                  <strong style={{ color: 'var(--color-ink-secondary)' }}>{lang === 'kn' ? 'ಯಾರಿಗಾಗಿ:' : 'Who it is for:'}</strong>{' '}
                   {lang === 'kn' && (activeWorkflow.who_it_is_for_kn || activeWorkflow.who_is_it_for_kn)
                     ? activeWorkflow.who_it_is_for_kn || activeWorkflow.who_is_it_for_kn
                     : activeWorkflow.who_it_is_for || activeWorkflow.who_is_it_for}
                 </span>
                 <span>•</span>
                 <span>
-                  <strong>{lang === 'kn' ? 'ಕೊನೆಯ ಪರಿಶೀಲನೆ:' : 'Last verified:'}</strong> {activeWorkflow.last_verified}
+                  <strong style={{ color: 'var(--color-ink-secondary)' }}>{lang === 'kn' ? 'ಕೊನೆಯ ಪರಿಶೀಲನೆ:' : 'Last verified:'}</strong> {activeWorkflow.last_verified}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Overall Document Checklist Bar */}
-          <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--color-surface-2)' }}>
-            <div className="flex items-center justify-between text-xs font-medium mb-1.5">
+          <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
+            <div className="flex items-center justify-between text-xs font-medium mb-1.5" style={{ color: 'var(--color-ink-secondary)' }}>
               <span>{lang === 'kn' ? 'ದಾಖಲೆಗಳ ಸಿದ್ಧತೆ ಪ್ರಗತಿ:' : 'Document Readiness Progress:'}</span>
-              <span className="font-mono">{checkedCount} / {allDocs.length} ({progressPercent}%)</span>
+              <span className="font-mono font-semibold" style={{ color: 'var(--color-ink-primary)' }}>{checkedCount} / {allDocs.length} ({progressPercent}%)</span>
             </div>
-            <div className="w-full h-2 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700">
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border-subtle)' }}>
               <div
                 className="h-full rounded-full transition-all duration-300"
                 style={{ width: `${progressPercent}%`, background: 'var(--color-accent)' }}
@@ -232,7 +231,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
           <div className="no-print lg:col-span-4">
             <div
               className="sticky top-20 p-4 rounded-xl border"
-              style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-surface-2)' }}
+              style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-border-subtle)' }}
             >
               <h3 className="text-xs font-mono font-semibold uppercase tracking-wider mb-4" style={{ color: 'var(--color-ink-secondary)' }}>
                 {lang === 'kn' ? 'ಹಂತಗಳ ಪಟ್ಟಿ' : 'Process Steps'}
@@ -242,34 +241,42 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                   const stepNum = st.step_number || (idx + 1);
                   const isCurrent = idx === activeStepIndex;
                   const isDone = idx < activeStepIndex;
+                  const statusLabel = isDone ? 'Done' : isCurrent ? 'Active' : 'Upcoming';
                   return (
                     <button
                       key={st.id || idx}
                       onClick={() => setActiveStepIndex(idx)}
-                      className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 ${
+                      className={`w-full text-left p-3 rounded-lg border transition-all flex items-start gap-3 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] ${
                         isCurrent
-                          ? 'border-teal-600 bg-teal-50/50 dark:bg-teal-950/20 shadow-xs ring-1 ring-teal-600'
-                          : 'border-transparent hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                          ? 'border-[var(--color-accent)] bg-[var(--color-accent-subtle)] shadow-xs ring-1 ring-[var(--color-accent)]'
+                          : 'border-transparent hover:bg-[var(--color-surface-2)]'
                       }`}
                     >
-                      <div className="mt-0.5">
+                      <div className="mt-0.5 shrink-0">
                         {isDone ? (
-                          <CheckCircle size={18} weight="fill" className="text-teal-600" />
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center status-badge-success" title="Completed step">
+                            <CheckCircle size={16} weight="fill" />
+                          </div>
                         ) : isCurrent ? (
-                          <div className="w-4 h-4 rounded-full border-2 border-teal-600 bg-teal-600 flex items-center justify-center text-[10px] text-white font-bold">
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }} title="Active step">
                             {stepNum}
                           </div>
                         ) : (
-                          <div className="w-4 h-4 rounded-full border border-neutral-400 flex items-center justify-center text-[10px] text-neutral-500 font-medium">
+                          <div className="w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-medium" style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-secondary)' }} title="Upcoming step">
                             {stepNum}
                           </div>
                         )}
                       </div>
-                      <div className="flex-1">
-                        <p className={`text-xs font-semibold ${isCurrent ? 'text-teal-800 dark:text-teal-300' : 'text-neutral-700 dark:text-neutral-300'}`}>
-                          {lang === 'kn' && st.title_kn ? st.title_kn : st.title}
-                        </p>
-                        <p className="text-[11px] text-neutral-500 mt-0.5 line-clamp-1">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <p className="text-xs font-semibold truncate" style={{ color: isCurrent ? 'var(--color-ink-primary)' : 'var(--color-ink-secondary)' }}>
+                            {lang === 'kn' && st.title_kn ? st.title_kn : st.title}
+                          </p>
+                          <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded font-medium shrink-0 ${isDone ? 'status-badge-success' : isCurrent ? 'status-badge-info' : 'border border-[var(--color-border-strong)] text-[var(--color-ink-tertiary)]'}`}>
+                            {statusLabel}
+                          </span>
+                        </div>
+                        <p className="text-[11px] mt-0.5 line-clamp-1" style={{ color: 'var(--color-ink-tertiary)' }}>
                           {st.typical_timeline}
                         </p>
                       </div>
@@ -279,11 +286,11 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
               </div>
 
               {/* Handoff Actions */}
-              <div className="mt-6 pt-4 border-t space-y-2.5" style={{ borderColor: 'var(--color-surface-2)' }}>
+              <div className="mt-6 pt-4 border-t space-y-2.5" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <button
                   onClick={() => onTrackCase(activeWorkflow.id, activeWorkflow.title, authorityName)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white shadow-xs transition-opacity hover:opacity-90"
-                  style={{ background: 'var(--color-accent)' }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                 >
                   <FolderSimplePlus size={18} weight="bold" />
                   {lang === 'kn' ? 'ಈ ಪ್ರಕ್ರಿಯೆಯನ್ನು ಪ್ರಕರಣವಾಗಿ ಟ್ರ್ಯಾಕ್ ಮಾಡಿ' : 'Track This as a Case'}
@@ -295,8 +302,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                       `I am working through step ${activeStepIndex + 1} ("${currentStep.title}") of the workflow "${activeWorkflow.title}". ${currentStep.what_to_do} What should I know or be cautious about?`
                     )
                   }
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                  style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-primary)' }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
                 >
                   <ChatCircleText size={16} />
                   {lang === 'kn' ? 'ಈ ಹಂತದ ಬಗ್ಗೆ ಸಹಾಯಕರನ್ನು ಕೇಳಿ' : 'Ask Assistant About This Step'}
@@ -308,27 +315,27 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
           {/* Active Step Details */}
           <div className="lg:col-span-8 space-y-6">
             <div
-              className="p-6 rounded-2xl border"
-              style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-surface-2)' }}
+              className="p-6 rounded-2xl border surface-card"
+              style={{ borderColor: 'var(--color-border-subtle)' }}
             >
               {/* Step Pill */}
               <div className="flex items-center justify-between mb-3">
-                <span className="px-2.5 py-1 rounded-md text-xs font-mono font-semibold uppercase bg-teal-100 text-teal-800 dark:bg-teal-950 dark:text-teal-300">
+                <span className="status-badge-info px-2.5 py-1 rounded-md text-xs font-mono font-semibold uppercase">
                   {lang === 'kn' ? `ಹಂತ ${activeStepIndex + 1} / ${totalSteps}` : `Step ${activeStepIndex + 1} of ${totalSteps}`}
                 </span>
-                <span className="flex items-center gap-1.5 text-xs text-neutral-500 font-medium">
+                <span className="flex items-center gap-1.5 text-xs font-medium" style={{ color: 'var(--color-ink-secondary)' }}>
                   <Clock size={15} />
                   {currentStep.typical_timeline}
                 </span>
               </div>
 
-              <h2 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
+              <h2 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 {lang === 'kn' && currentStep.title_kn ? currentStep.title_kn : currentStep.title}
               </h2>
 
               {/* What to do */}
-              <div className="mt-4 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/60 border border-neutral-200/80 dark:border-neutral-700/60">
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-1">
+              <div className="mt-4 p-4 rounded-xl border" style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-border-subtle)' }}>
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--color-ink-secondary)' }}>
                   {lang === 'kn' ? 'ನೀವು ಏನು ಮಾಡಬೇಕು:' : 'What To Do:'}
                 </h4>
                 <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'var(--color-ink-primary)' }}>
@@ -338,35 +345,35 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
 
               {/* Branching flow question (if exists) */}
               {currentStep.branch_condition && (
-                <div className="mt-4 p-4 rounded-xl border border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-900/60">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-800 dark:text-amber-300 flex items-center gap-1.5 mb-2">
+                <div className="mt-4 p-4 rounded-xl border status-badge-warning">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 mb-2">
                     <Info size={16} />
                     {lang === 'kn' ? 'ತ್ವರಿತ ಪರಿಶೀಲನೆ:' : 'Branching Question:'} {currentStep.branch_condition.question}
                   </h4>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setBranchAnswer('yes')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] ${
                         branchAnswer === 'yes'
-                          ? 'bg-amber-600 text-white border-amber-600'
-                          : 'bg-white dark:bg-neutral-800 border-neutral-300 hover:bg-neutral-100'
+                          ? 'status-badge-warning ring-2 ring-[var(--color-status-warning-border)]'
+                          : 'bg-[var(--color-surface-1)] border-[var(--color-border-strong)] text-[var(--color-ink-primary)]'
                       }`}
                     >
                       {lang === 'kn' ? 'ಹೌದು' : 'Yes'}
                     </button>
                     <button
                       onClick={() => setBranchAnswer('no')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] ${
                         branchAnswer === 'no'
-                          ? 'bg-amber-600 text-white border-amber-600'
-                          : 'bg-white dark:bg-neutral-800 border-neutral-300 hover:bg-neutral-100'
+                          ? 'status-badge-warning ring-2 ring-[var(--color-status-warning-border)]'
+                          : 'bg-[var(--color-surface-1)] border-[var(--color-border-strong)] text-[var(--color-ink-primary)]'
                       }`}
                     >
                       {lang === 'kn' ? 'ಇಲ್ಲ' : 'No'}
                     </button>
                   </div>
                   {branchAnswer && (
-                    <p className="mt-2 text-xs font-medium text-amber-900 dark:text-amber-200">
+                    <p className="mt-2 text-xs font-medium">
                       💡{' '}
                       {branchAnswer === 'yes'
                         ? currentStep.branch_condition.if_yes_instruction || currentStep.branch_condition.if_yes
@@ -378,7 +385,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
 
               {/* Documents Checklist for this step */}
               <div className="mt-6">
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: 'var(--color-ink-secondary)' }}>
                   <FileText size={16} />
                   {lang === 'kn' ? 'ಈ ಹಂತಕ್ಕೆ ಅಗತ್ಯವಿರುವ ದಾಖಲೆಗಳು:' : 'Documents Needed for this Step:'}
                 </h4>
@@ -391,21 +398,21 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                         onClick={() => toggleDocumentCheck(doc)}
                         className={`p-3 rounded-lg border cursor-pointer flex items-center justify-between gap-3 transition-colors ${
                           isChecked
-                            ? 'bg-teal-50/60 border-teal-300 dark:bg-teal-950/20 dark:border-teal-800'
-                            : 'bg-neutral-50 dark:bg-neutral-800/40 border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100'
+                            ? 'bg-[var(--color-accent-subtle)] border-[var(--color-border-strong)]'
+                            : 'bg-[var(--color-surface-1)] border-[var(--color-border-subtle)] hover:bg-[var(--color-surface-2)]'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           {isChecked ? (
-                            <CheckSquare size={20} weight="fill" className="text-teal-600" />
+                            <CheckSquare size={20} weight="fill" style={{ color: 'var(--color-accent)' }} />
                           ) : (
-                            <div className="w-5 h-5 rounded border border-neutral-400 bg-white dark:bg-neutral-900" />
+                            <div className="w-5 h-5 rounded border bg-[var(--color-surface-0)]" style={{ borderColor: 'var(--color-border-strong)' }} />
                           )}
-                          <span className={`text-sm ${isChecked ? 'line-through text-neutral-500 dark:text-neutral-400' : 'text-neutral-800 dark:text-neutral-200'}`}>
+                          <span className={`text-sm ${isChecked ? 'line-through opacity-75' : ''}`} style={{ color: 'var(--color-ink-primary)' }}>
                             {doc}
                           </span>
                         </div>
-                        <span className="text-[11px] font-mono text-neutral-400 uppercase">
+                        <span className={`text-[11px] font-mono uppercase px-2 py-0.5 rounded font-semibold ${isChecked ? 'status-badge-success' : 'border border-[var(--color-border-strong)] text-[var(--color-ink-secondary)]'}`}>
                           {isChecked ? 'Ready' : 'Pending'}
                         </span>
                       </div>
@@ -416,13 +423,13 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
 
               {/* Common Mistakes */}
               {currentStep.common_mistakes && (
-                <div className="mt-6 p-4 rounded-xl border border-red-200 bg-red-50/40 dark:bg-red-950/20 dark:border-red-900/40 flex items-start gap-3">
-                  <Warning size={20} className="text-red-600 mt-0.5 shrink-0" />
+                <div className="mt-6 p-4 rounded-xl border status-badge-danger flex items-start gap-3">
+                  <Warning size={20} className="shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="text-xs font-bold uppercase tracking-wider text-red-800 dark:text-red-300">
+                    <h5 className="text-xs font-bold uppercase tracking-wider">
                       {lang === 'kn' ? 'ಸಾಮಾನ್ಯ ತಪ್ಪುಗಳು ಮತ್ತು ಎಚ್ಚರಿಕೆ:' : 'Common Mistakes to Avoid:'}
                     </h5>
-                    <p className="mt-1 text-xs sm:text-sm text-red-900 dark:text-red-200">
+                    <p className="mt-1 text-xs sm:text-sm leading-relaxed">
                       {Array.isArray(currentStep.common_mistakes)
                         ? currentStep.common_mistakes.join('; ')
                         : currentStep.common_mistakes}
@@ -432,8 +439,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
               )}
 
               {/* Where to go / Authority with Center Card */}
-              <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--color-surface-2)' }}>
-                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider text-neutral-500 mb-2 flex items-center gap-2">
+              <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                <h4 className="text-xs font-mono font-semibold uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: 'var(--color-ink-secondary)' }}>
                   <Buildings size={16} />
                   {lang === 'kn' ? 'ಎಲ್ಲಿಗೆ ಹೋಗಬೇಕು / ಯಾರನ್ನು ಸಂಪರ್ಕಿಸಬೇಕು:' : 'Where To Go / Authority:'}
                 </h4>
@@ -442,13 +449,13 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                 </p>
 
                 {matchedCentre && (
-                  <div className="p-4 rounded-xl border bg-neutral-50 dark:bg-neutral-800/80 border-neutral-200 dark:border-neutral-700 flex flex-wrap items-center justify-between gap-4">
+                  <div className="p-4 rounded-xl border flex flex-wrap items-center justify-between gap-4" style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-border-subtle)' }}>
                     <div>
-                      <span className="text-[11px] font-mono uppercase px-2 py-0.5 rounded bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200">
+                      <span className="status-badge-info text-[11px] font-mono uppercase px-2 py-0.5 rounded font-semibold">
                         {matchedCentre.type}
                       </span>
-                      <h5 className="text-sm font-bold mt-1">{matchedCentre.name}</h5>
-                      <p className="text-xs text-neutral-500 mt-0.5">{matchedCentre.address}</p>
+                      <h5 className="text-sm font-bold mt-1" style={{ color: 'var(--color-ink-primary)' }}>{matchedCentre.name}</h5>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-ink-secondary)' }}>{matchedCentre.address}</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -456,7 +463,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                         href={getGoogleMapsUrl(matchedCentre.lat, matchedCentre.lng)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border bg-white dark:bg-neutral-900 transition-colors hover:bg-neutral-50"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                        style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
                       >
                         <ArrowSquareOut size={14} />
                         Open in Maps
@@ -464,8 +472,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                       {matchedCentre.phone && (
                         <a
                           href={getPhoneUrl(matchedCentre.phone)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-opacity hover:opacity-90"
-                          style={{ background: 'var(--color-accent)' }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                          style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                         >
                           <Phone size={14} />
                           Call
@@ -477,12 +485,12 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
               </div>
 
               {/* Stepper Forward / Back navigation buttons */}
-              <div className="no-print mt-8 pt-6 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-surface-2)' }}>
+              <div className="no-print mt-8 pt-6 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <button
                   disabled={activeStepIndex === 0}
                   onClick={() => setActiveStepIndex((prev) => Math.max(0, prev - 1))}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold border disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                  style={{ borderColor: 'var(--color-surface-2)' }}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold border disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{ borderColor: 'var(--color-border-strong)', color: 'var(--color-ink-primary)', background: 'var(--color-surface-1)' }}
                 >
                   {lang === 'kn' ? 'ಹಿಂದಿನ ಹಂತ' : 'Previous Step'}
                 </button>
@@ -490,8 +498,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                 {activeStepIndex < totalSteps - 1 ? (
                   <button
                     onClick={() => setActiveStepIndex((prev) => Math.min(totalSteps - 1, prev + 1))}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-90"
-                    style={{ background: 'var(--color-accent)' }}
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                    style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                   >
                     {lang === 'kn' ? 'ಮುಂದಿನ ಹಂತ' : 'Next Step'}
                     <CaretRight size={14} weight="bold" />
@@ -499,7 +507,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                 ) : (
                   <button
                     onClick={() => onTrackCase(activeWorkflow.id, activeWorkflow.title, authorityName)}
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold text-white shadow-xs bg-emerald-600 hover:bg-emerald-700 transition-colors"
+                    className="status-badge-success flex items-center gap-1.5 px-5 py-2 rounded-lg text-xs font-semibold shadow-xs transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
                   >
                     <FolderSimplePlus size={16} weight="bold" />
                     {lang === 'kn' ? 'ಪ್ರಕ್ರಿಯೆ ಪೂರ್ಣಗೊಳಿಸಿ — ಕೇಸ್ ರಚಿಸಿ' : 'Finish & Track as Case'}
@@ -518,13 +526,13 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto mb-8">
-        <span className="text-xs font-mono font-semibold uppercase tracking-wider text-teal-700 dark:text-teal-400">
+        <span className="status-badge-info text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block">
           {lang === 'kn' ? 'ಹಂತ-ಹಂತದ ಮಾರ್ಗದರ್ಶಿ' : 'Guided Legal Workflows'}
         </span>
-        <h1 className="text-3xl font-semibold mt-1.5" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em' }}>
+        <h1 className="text-3xl font-semibold mt-2" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em', color: 'var(--color-ink-primary)' }}>
           {lang === 'kn' ? 'ಸಾಮಾನ್ಯ ಸಮಸ್ಯೆಗಳಿಗೆ ಸರಳ ಪರಿಹಾರ ಮಾರ್ಗ' : 'Navigate Common Legal Situations'}
         </h1>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--color-ink-secondary)' }}>
           {lang === 'kn'
             ? 'ಕಾನೂನು ಭಾಷೆಯ ಬದಲು ನಿಮ್ಮ ವಾಸ್ತವ ಪರಿಸ್ಥಿತಿಯ ಆಧಾರದ ಮೇಲೆ ಮಾರ್ಗದರ್ಶನ ಪಡೆಯಿರಿ.'
             : 'Structured procedural checklists defined as transparent data. Written in everyday language, not legal jargon.'}
@@ -532,7 +540,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
 
         {/* Search Bar */}
         <div className="mt-6 relative max-w-lg mx-auto">
-          <MagnifyingGlass size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+          <MagnifyingGlass size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--color-ink-tertiary)' }} />
           <input
             type="text"
             value={searchQuery}
@@ -542,12 +550,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
                 ? 'ಸಮಸ್ಯೆಯನ್ನು ಹುಡುಕಿ (ಉದಾ: ಬಾಡಿಗೆ, ಸಂಬಳ, ಆರ್‌ಟಿಐ, ಗ್ರಾಹಕ)...'
                 : 'Search by situation (e.g., rental deposit, unpaid wages, RTI, consumer)...'
             }
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border text-sm shadow-xs outline-none focus:ring-2 focus:ring-teal-600 transition-all"
-            style={{
-              background: 'var(--color-surface-1)',
-              borderColor: 'var(--color-surface-2)',
-              color: 'var(--color-ink-primary)',
-            }}
+            className="input-control w-full pl-10 pr-4 py-2.5 text-sm shadow-xs transition-all"
           />
         </div>
       </div>
@@ -563,50 +566,47 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
           return (
             <div
               key={wf.id}
-              className="rounded-2xl border p-6 flex flex-col justify-between transition-all hover:shadow-md"
-              style={{
-                background: 'var(--color-surface-1)',
-                borderColor: 'var(--color-surface-2)',
-              }}
+              className="rounded-2xl border p-6 flex flex-col justify-between transition-all hover:shadow-md surface-card"
+              style={{ borderColor: 'var(--color-border-subtle)' }}
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300">
+                  <span className="status-badge-info text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded-full">
                     {wf.steps.length} {lang === 'kn' ? 'ಹಂತಗಳು' : 'Steps'}
                   </span>
                   {wf.is_sample && (
                     <span
-                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                      style={{ background: 'var(--color-status-warning-bg)', color: 'var(--color-status-warning-ink)' }}
+                      className="status-badge-warning text-[10px] font-semibold px-2 py-0.5 rounded-full"
                     >
                       SAMPLE
                     </span>
                   )}
                 </div>
 
-                <h3 className="text-lg font-bold leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
+                <h3 className="text-lg font-bold leading-snug" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                   {lang === 'kn' && wf.title_kn ? wf.title_kn : wf.title}
                 </h3>
 
-                <p className="mt-2 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 line-clamp-3">
+                <p className="mt-2 text-xs leading-relaxed line-clamp-3" style={{ color: 'var(--color-ink-secondary)' }}>
                   {lang === 'kn' && summaryKn ? summaryKn : summaryEn}
                 </p>
 
-                <div className="mt-4 pt-3 border-t text-[11px] text-neutral-500 space-y-1" style={{ borderColor: 'var(--color-surface-2)' }}>
+                <div className="mt-4 pt-3 border-t text-[11px] space-y-1" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-ink-tertiary)' }}>
                   <p>
-                    <strong>{lang === 'kn' ? 'ಅನ್ವಯ:' : 'For:'}</strong>{' '}
+                    <strong style={{ color: 'var(--color-ink-secondary)' }}>{lang === 'kn' ? 'ಅನ್ವಯ:' : 'For:'}</strong>{' '}
                     <span className="line-clamp-1">{lang === 'kn' && whoKn ? whoKn : whoEn}</span>
                   </p>
                   <p>
-                    <strong>{lang === 'kn' ? 'ಪರಿಶೀಲನೆ:' : 'Verified:'}</strong> {wf.last_verified}
+                    <strong style={{ color: 'var(--color-ink-secondary)' }}>{lang === 'kn' ? 'ಪರಿಶೀಲನೆ:' : 'Verified:'}</strong> {wf.last_verified}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-surface-2)' }}>
+              <div className="mt-6 pt-4 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <button
                   onClick={() => setSelectedWorkflowId(wf.id)}
-                  className="flex items-center gap-1.5 text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline"
+                  className="flex items-center gap-1.5 text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] rounded"
+                  style={{ color: 'var(--color-accent-text)' }}
                 >
                   {lang === 'kn' ? 'ಮಾರ್ಗದರ್ಶಿ ಪ್ರಾರಂಭಿಸಿ' : 'View Guided Steps'}
                   <CaretRight size={14} weight="bold" />
@@ -614,7 +614,8 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
 
                 <button
                   onClick={() => onTrackCase(wf.id, wf.title, 'District Legal Services Authority')}
-                  className="text-[11px] font-medium text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200"
+                  className="text-[11px] font-medium hover:underline focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] rounded"
+                  style={{ color: 'var(--color-ink-secondary)' }}
                 >
                   {lang === 'kn' ? '+ ನೇರ ಟ್ರ್ಯಾಕ್' : '+ Track as Case'}
                 </button>

@@ -182,6 +182,35 @@ To update or verify a workflow:
 
 ---
 
+## 🗺️ MapTiler Basemap Configuration
+
+Nyaya-Maarg uses MapLibre GL JS with MapTiler vector basemaps (`dataviz-light` and `dataviz-dark`) for clean, muted cartography that lets civic gap analysis layers carry the visual signal.
+
+### 1. Obtaining a Key
+1. Sign up for a free account at [MapTiler Cloud](https://cloud.maptiler.com/).
+2. Navigate to **Account -> API Keys**.
+3. Create a new key dedicated to Nyaya-Maarg.
+
+### 2. Restricting Your Key
+To protect your key from unauthorized usage:
+- In the MapTiler Cloud dashboard, edit your API key.
+- Under **Allowed HTTP Origins**, add your domains (e.g., `https://nyaya-maarg.vercel.app/*`, `http://localhost:5173/*`).
+- MapTiler will reject tile requests from any other domain.
+
+### 3. Environment Variables
+Add your key to `.env.local` (which is gitignored):
+```env
+VITE_MAPTILER_KEY=your_maptiler_key_here
+```
+> **Security Notice**: Never commit `VITE_MAPTILER_KEY` to source code or git history. The codebase reads it via `import.meta.env.VITE_MAPTILER_KEY`. If the key is missing or invalid, Nyaya-Maarg gracefully falls back to an accessible, searchable tabular view of all legal aid centres and taluks.
+
+### 4. Plan Limits & Terms
+- The MapTiler free tier allows up to 100,000 monthly tile requests.
+- Monitor your usage in the MapTiler Cloud dashboard under **Usage / Analytics**.
+- Keep the OpenStreetMap and MapTiler attributions visible on the map container.
+
+---
+
 ## 🚀 Running the App Locally
 
 ```bash

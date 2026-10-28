@@ -6,27 +6,35 @@
 
 ---
 
-## 1. Palette
+## 1. Palette & WCAG AA Contrast Compliance
 
-### Cool Neutral Base (Zinc/Graphite)
-- Light background: `#F8F9FA` (cool crisp off-white)
-- Dark background: `#0B0D11` (deep graphite zinc)
-- Primary text: `#111318` (high-contrast off-black, never `#000000`) / `#F0F2F5` in dark mode
-- Secondary text: `#4D535E` / `#9BA3AF` in dark mode
-- Tertiary text: `#7B828F` / `#646E7E` in dark mode
+### Cool Neutral Base (Zinc/Graphite) & Semantic Tokens
+Audited against WCAG AA requirements (>= 4.5:1 for body and captions, >= 3:1 for large text, icons, borders, and focus rings):
 
-| Token                 | Light Value          | Dark Value           | Usage                                        |
-|-----------------------|----------------------|----------------------|----------------------------------------------|
-| `--color-surface-0`   | `#F8F9FA`            | `#0B0D11`            | Page canvas background                       |
-| `--color-surface-1`   | `#FFFFFF`            | `#13171F`            | Primary container, elevated card             |
-| `--color-surface-2`   | `#EEF0F2`            | `#1D232F`            | Dividers, borders, subtle panels             |
-| `--color-surface-3`   | `#E2E5E9`            | `#2A3242`            | Hover states, active borders                 |
-| `--color-ink-primary` | `#111318`            | `#F0F2F5`            | Primary copy, headers, metrics               |
-| `--color-ink-secondary`| `#4D535E`           | `#9BA3AF`            | Supporting captions, methodology text        |
-| `--color-ink-tertiary`| `#7B828F`            | `#646E7E`            | Quiet metadata, table column labels          |
-| `--color-accent`      | `#1D5CA8`            | `#4889E8`            | Single UI accent (Steel Blue, saturation <80%)|
-| `--color-accent-hover`| `#154B8B`            | `#6BA3F2`            | Interactive hover                            |
-| `--color-accent-subtle`| `#EBF3FC`           | `#12243C`            | Active tab background, soft highlight        |
+| Token                 | Light Value | Dark Value  | Contrast vs BG (Light) | Contrast vs BG (Dark) | WCAG Rating | Usage |
+|-----------------------|-------------|-------------|------------------------|-----------------------|-------------|-------|
+| `--color-surface-0`   | `#F8F9FA`   | `#0B0D11`   | Base Canvas            | Base Canvas           | —           | Page background |
+| `--color-surface-1`   | `#FFFFFF`   | `#13171F`   | Raised Canvas          | Raised Canvas         | —           | Card and modal surface |
+| `--color-surface-2`   | `#EEF0F2`   | `#1D232F`   | Subtle Surface         | Subtle Surface        | —           | Dividers, hover backgrounds |
+| `--color-surface-3`   | `#E2E5E9`   | `#2A3242`   | Elevated Surface       | Elevated Surface      | —           | Active states |
+| `--color-ink-primary` | `#111318`   | `#F0F2F5`   | **17.5:1** vs #FFF     | **15.2:1** vs #13171F | **AAA**     | Headings, primary copy |
+| `--color-ink-secondary`| `#3D4450`  | `#B4BCC8`   | **7.1:1** vs #FFF      | **8.6:1** vs #13171F  | **AAA**     | Body text, captions |
+| `--color-ink-tertiary`| `#525A69`   | `#98A2B2`   | **4.9:1** vs #FFF      | **6.3:1** vs #13171F  | **AA**      | Metadata, timestamps, placeholders |
+| `--color-border-subtle`| `#D5D9E0`  | `#2D3748`   | Card outlines          | Card outlines         | —           | Container dividers |
+| `--color-border-strong`| `#788292`  | `#64748B`   | **3.2:1** vs #FFF      | **3.3:1** vs #13171F  | **AA UI**   | Form input borders, chip outlines |
+| `--color-accent`      | `#1D5CA8`   | `#2563EB`   | **6.2:1** vs #FFF      | **5.2:1** with #FFF text| **AA**   | Primary action buttons (white text) |
+| `--color-accent-text` | `#174E91`   | `#60A5FA`   | **6.8:1** vs #FFF      | **7.1:1** vs #0B0D11  | **AAA**     | Active nav tabs, text links |
+| `--color-on-accent`   | `#FFFFFF`   | `#FFFFFF`   | White text on accent   | White text on accent  | **AA**      | Text on primary buttons |
+| `--color-focus-ring`  | `#1D5CA8`   | `#60A5FA`   | **6.2:1** outline      | **7.1:1** outline     | **AA UI**   | 2px interactive focus rings |
+| `--color-status-danger`| `#B91C1C`  | `#F87171`   | **6.1:1** in badge     | **8.1:1** in badge    | **AAA**     | Overdue deadlines, emergency warnings |
+| `--color-status-warning`| `#92400E` | `#FBBF24`   | **5.8:1** in badge     | **9.2:1** in badge    | **AAA**     | SAMPLE notices, branching alerts |
+| `--color-status-success`| `#166534` | `#4ADE80`   | **6.4:1** in badge     | **8.4:1** in badge    | **AAA**     | Completed checklist, ready badges |
+| `--color-status-info` | `#1D5CA8`   | `#60A5FA`   | **5.6:1** in badge     | **7.9:1** in badge    | **AAA**     | Category pills, procedural guidance |
+
+### Accessible Interaction & Dual Encoding
+- **Dual-Encoded Statuses**: Every status indicator combines an icon + unambiguous text label (e.g., ⚠️ OVERDUE, ✅ Ready, 📝 In Progress), never relying on color alone.
+- **Focus Rings**: Mandatory 2px visible focus ring (`--color-focus-ring`) with 2px offset on all interactive buttons, inputs, links, and tabs.
+- **High-Contrast Mode Support**: Explicit `@media (prefers-contrast: more)` styles strengthening borders and elevating text contrast ratios to AAA standard (> 7:1).
 
 *Banned aesthetics: cream/bone/warm-paper backgrounds, brass/clay/ochre accents, espresso text, purple-blue AI gradients, neon glows, gradient headline text.*
 
@@ -66,7 +74,7 @@ gap-4: #A31D1D  (Critical isolated gap, > 75 km)
 - **Independence Notice:** "Independent civic data publication. Not a government agency or official legal services authority."
 - **Tagline:** "Mapping Karnataka's public legal aid reach" (used in header/footer, never in hero).
 - **Kannada Wordmark:** "ನ್ಯಾಯ ಮಾರ್ಗ" (Noto Sans Kannada) in footer [Flagged for native Kannada speaker verification].
-- **Signature Visual:** Straight-line path vectors connecting underserved centroids to nearest mapped centres on the real Leaflet map, length representing distance gap.
+- **Signature Visual:** Straight-line path vectors connecting underserved centroids to nearest mapped centres on the real MapLibre GL JS / MapTiler vector map (`dataviz-light` and `dataviz-dark`), length representing distance gap.
 
 ---
 

@@ -494,7 +494,7 @@ function App() {
             className="flex items-center gap-1 px-3.5 py-1.5 rounded-md text-sm font-medium transition-all"
             style={{
               background: view === 'overview' ? 'var(--color-surface-0)' : 'transparent',
-              color: view === 'overview' ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+              color: view === 'overview' ? 'var(--color-accent-text)' : 'var(--color-ink-secondary)',
               boxShadow: view === 'overview' ? 'var(--shadow-sm)' : 'none',
               fontFamily: 'var(--font-sans)',
             }}
@@ -508,7 +508,7 @@ function App() {
             className="flex items-center gap-1 px-3.5 py-2 rounded-md text-sm font-medium transition-all"
             style={{
               background: view === 'explorer' ? 'var(--color-surface-0)' : 'transparent',
-              color: view === 'explorer' ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+              color: view === 'explorer' ? 'var(--color-accent-text)' : 'var(--color-ink-secondary)',
               boxShadow: view === 'explorer' ? 'var(--shadow-sm)' : 'none',
               fontFamily: 'var(--font-sans)',
             }}
@@ -522,7 +522,7 @@ function App() {
             className="flex items-center gap-1 px-3.5 py-2 rounded-md text-sm font-medium transition-all"
             style={{
               background: view === 'insights' ? 'var(--color-surface-0)' : 'transparent',
-              color: view === 'insights' ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+              color: view === 'insights' ? 'var(--color-accent-text)' : 'var(--color-ink-secondary)',
               boxShadow: view === 'insights' ? 'var(--shadow-sm)' : 'none',
               fontFamily: 'var(--font-sans)',
             }}
@@ -537,7 +537,7 @@ function App() {
             className="flex items-center gap-1 px-3.5 py-2 rounded-md text-sm font-medium transition-all"
             style={{
               background: view === 'workflows' ? 'var(--color-surface-0)' : 'transparent',
-              color: view === 'workflows' ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+              color: view === 'workflows' ? 'var(--color-accent-text)' : 'var(--color-ink-secondary)',
               boxShadow: view === 'workflows' ? 'var(--shadow-sm)' : 'none',
               fontFamily: 'var(--font-sans)',
             }}
@@ -550,10 +550,10 @@ function App() {
           <div className="relative">
             <button
               onClick={() => setMyHelpMenuOpen(!myHelpMenuOpen)}
-              className="flex items-center gap-1 px-3.5 py-2 rounded-md text-sm font-medium transition-all"
+              className="flex items-center gap-1 px-3.5 py-2 rounded-md text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
               style={{
                 background: ['cases', 'interpreter', 'navigator'].includes(view) ? 'var(--color-surface-0)' : 'transparent',
-                color: ['cases', 'interpreter', 'navigator'].includes(view) ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+                color: ['cases', 'interpreter', 'navigator'].includes(view) ? 'var(--color-accent-text)' : 'var(--color-ink-secondary)',
                 boxShadow: ['cases', 'interpreter', 'navigator'].includes(view) ? 'var(--shadow-sm)' : 'none',
                 fontFamily: 'var(--font-sans)',
               }}
@@ -565,10 +565,9 @@ function App() {
 
             {myHelpMenuOpen && (
               <div
-                className="absolute left-0 mt-1.5 w-52 py-2 rounded-xl border shadow-lg z-50 text-xs"
+                className="absolute left-0 mt-1.5 w-52 py-2 rounded-xl border shadow-lg z-50 text-xs surface-card"
                 style={{
-                  background: 'var(--color-surface-0)',
-                  borderColor: 'var(--color-surface-2)',
+                  borderColor: 'var(--color-border-subtle)',
                 }}
               >
                 <button
@@ -576,21 +575,23 @@ function App() {
                     setMyHelpMenuOpen(false);
                     navigateToView('cases');
                   }}
-                  className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-[var(--color-surface-2)] transition-colors"
+                  style={{ color: 'var(--color-ink-primary)' }}
                 >
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                  <span className="font-semibold">
                     📁 {t('cases', lang)}
                   </span>
-                  {!isAuthenticated && <LockKey size={13} className="text-neutral-400" />}
+                  {!isAuthenticated && <LockKey size={13} style={{ color: 'var(--color-ink-tertiary)' }} />}
                 </button>
                 <button
                   onClick={() => {
                     setMyHelpMenuOpen(false);
                     navigateToView('interpreter');
                   }}
-                  className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-[var(--color-surface-2)] transition-colors"
+                  style={{ color: 'var(--color-ink-primary)' }}
                 >
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                  <span className="font-semibold">
                     📄 {t('interpreter', lang)}
                   </span>
                 </button>
@@ -599,9 +600,10 @@ function App() {
                     setMyHelpMenuOpen(false);
                     navigateToView('navigator');
                   }}
-                  className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  className="w-full text-left px-3.5 py-2 flex items-center justify-between hover:bg-[var(--color-surface-2)] transition-colors"
+                  style={{ color: 'var(--color-ink-primary)' }}
                 >
-                  <span className="font-semibold text-neutral-800 dark:text-neutral-200">
+                  <span className="font-semibold">
                     🧭 {t('navigator', lang)}
                   </span>
                 </button>
@@ -729,7 +731,7 @@ function App() {
             className="px-3 py-1.5 rounded-md text-xs font-medium transition-all text-center whitespace-nowrap flex items-center justify-center gap-1 shrink-0"
             style={{
               background: view === v ? 'var(--color-surface-0)' : 'transparent',
-              color: view === v ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+              color: view === v ? 'var(--color-accent-text)' : 'var(--color-ink-secondary)',
               boxShadow: view === v ? 'var(--shadow-sm)' : 'none',
             }}
           >
