@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { handleInterpretRequest } from '../src/server/interpreterHandler.js';
+import { verifyUserToken } from '../src/server/authMiddleware.js';
 
 export default async function handler(req: IncomingMessage & { body?: any }, res: ServerResponse) {
   if (req.method !== 'POST') {
@@ -21,6 +22,15 @@ export default async function handler(req: IncomingMessage & { body?: any }, res
       res.end(JSON.stringify({ error: 'Malformed JSON' }));
       return;
     }
+  }
+
+  // Server-side auth check: validate user access token (JWT)
+  const auth = await verifyUserToken(req, true); // Allow guest with strict rate limits
+  if (!auth.isAuthenticated && !auth.isGuest) {
+    res.statusCode = 401;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Unauthorized: valid session token required' }));
+    return;
   }
 
   try {

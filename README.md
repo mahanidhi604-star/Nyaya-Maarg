@@ -182,32 +182,51 @@ To update or verify a workflow:
 
 ---
 
-## 🗺️ MapTiler Basemap Configuration
+## 🗺️ Offline Blank Map & Spatial Geometry
 
-Nyaya-Maarg uses MapLibre GL JS with MapTiler vector basemaps (`dataviz-light` and `dataviz-dark`) for clean, muted cartography that lets civic gap analysis layers carry the visual signal.
+Nyaya-Maarg operates on a 100% offline, privacy-first blank map canvas with zero external basemap or tile network requests (zero MapTiler, Mapbox, or OpenStreetMap tile dependencies).
 
-### 1. Obtaining a Key
-1. Sign up for a free account at [MapTiler Cloud](https://cloud.maptiler.com/).
-2. Navigate to **Account -> API Keys**.
-3. Create a new key dedicated to Nyaya-Maarg.
+### 1. Canvas & Cartography
+- **Theme-Aware Canvas:** `#F8F9FA` in light mode, `#0B0D11` in dark mode.
+- **Boundaries Geometry:** Karnataka district outlines rendered via locally bundled GeoJSON: `/public/data/karnataka_districts.geojson`.
+- **Source & License:** District boundaries adapted from GADM / Datameet States of India, licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+- **Orientation Cues:** Top toolbar includes a North orientation indicator, scale bar (km), and a 1-click **Reset View** button to restore default Karnataka bounds.
+- **Data Layers:** Mapped legal aid centres (`#1D5CA8` / `#2563EB`), straight-line distance gap vectors from underserved centroids, interactive office detail drawers, and what-if camp simulator (25 km radius).
+- **Fallback Directory:** Built-in searchable list view accessible via the toolbar toggle for keyboard and text accessibility.
 
-### 2. Restricting Your Key
-To protect your key from unauthorized usage:
-- In the MapTiler Cloud dashboard, edit your API key.
-- Under **Allowed HTTP Origins**, add your domains (e.g., `https://nyaya-maarg.vercel.app/*`, `http://localhost:5173/*`).
-- MapTiler will reject tile requests from any other domain.
+---
 
-### 3. Environment Variables
-Add your key to `.env.local` (which is gitignored):
+## 🔐 Real Authentication Setup (Supabase Auth)
+
+Nyaya-Maarg uses real managed authentication via Supabase Auth. Any mock users, fake credential bypasses, or client-side password bypasses have been completely removed.
+
+### 1. Required Environment Variables
+Set the following variables in `.env.local` (frontend client) and server environment:
 ```env
-VITE_MAPTILER_KEY=your_maptiler_key_here
-```
-> **Security Notice**: Never commit `VITE_MAPTILER_KEY` to source code or git history. The codebase reads it via `import.meta.env.VITE_MAPTILER_KEY`. If the key is missing or invalid, Nyaya-Maarg gracefully falls back to an accessible, searchable tabular view of all legal aid centres and taluks.
+# Client-side Supabase credentials (VITE_ prefixed, safe for public distribution)
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 
-### 4. Plan Limits & Terms
-- The MapTiler free tier allows up to 100,000 monthly tile requests.
-- Monitor your usage in the MapTiler Cloud dashboard under **Usage / Analytics**.
-- Keep the OpenStreetMap and MapTiler attributions visible on the map container.
+# Server-side AI key (never exposed to frontend)
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+> If `VITE_SUPABASE_URL` or `VITE_SUPABASE_ANON_KEY` is missing, the application halts sign-in attempts with an explicit inline error ("Authentication service is not configured") and never falls back to a fake or mock login.
+
+### 2. Supabase Dashboard Provider Settings
+To configure your Supabase project:
+1. Navigate to **Authentication -> Providers** and verify that **Email** is **Enabled**.
+2. Under **Authentication -> Email**, toggle "Confirm email" according to your deployment stage (disabled for local development/testing, enabled for production).
+3. Under **Authentication -> Password Settings**, enforce a minimum password length of at least 6 characters.
+4. Under **Authentication -> URL Configuration**, configure:
+   - **Site URL**: `http://localhost:5173` (or your production URL).
+   - **Redirect URLs**: Add `http://localhost:5173/**` and `https://<your-app>.vercel.app/**`.
+5. Under **Database -> Tables**, enable **Row-Level Security (RLS)** on `cases` and `case_events` tables with policies:
+   - `auth.uid() = user_id` for SELECT, INSERT, UPDATE, DELETE.
+
+### 3. Route Protection & Serverless API Token Verification
+- **Protected UI Routes:** `/cases` and `/insights` check the verified session on load and route changes. Unauthenticated visitors are immediately redirected to `/login?returnTo=/<route>`.
+- **Serverless API Endpoints (`/api/assistant`, `/api/interpret`):** Strictly validate the caller's Supabase JWT access token on every request. Missing, expired, or invalid tokens return **HTTP 401 Unauthorized**.
+- **Guest Demo Mode:** A single explicit "Continue as guest (demo)" button enables temporary testing. Guests are clearly tagged with a "Guest" pill in the header, receive zero database access, and store demo cases strictly in browser memory or `localStorage`.
 
 ---
 

@@ -153,9 +153,27 @@ export const CaseInterpreterView: React.FC<CaseInterpreterViewProps> = ({
     const payloadText = enableRedaction ? redactedPreview : inputText;
 
     try {
+      let token: string | null = null;
+      try {
+        const { supabase } = await import('../lib/supabase');
+        if (supabase) {
+          const { data } = await supabase.auth.getSession();
+          token = data.session?.access_token || null;
+        }
+      } catch {
+        // Fallback to guest header
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      } else {
+        headers['x-nyaya-guest'] = 'true';
+      }
+
       const res = await fetch('/api/interpret', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           text: payloadText,
           imageBase64: imageBase64 || undefined,

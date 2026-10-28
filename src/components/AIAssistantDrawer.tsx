@@ -143,9 +143,28 @@ export default function AIAssistantDrawer({
     } : undefined;
 
     try {
+      // Attach session token or guest header
+      let token: string | null = null;
+      try {
+        const { supabase } = await import('../lib/supabase');
+        if (supabase) {
+          const { data } = await supabase.auth.getSession();
+          token = data.session?.access_token || null;
+        }
+      } catch {
+        // Fallback to guest mode
+      }
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      } else {
+        headers['x-nyaya-guest'] = 'true';
+      }
+
       const response = await fetch('/api/assistant', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
           sessionId: sessionId.current,

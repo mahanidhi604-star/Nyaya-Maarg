@@ -55,74 +55,81 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const continueAsGuest = () => {
     setIsGuest(true);
+    setUser(null);
     localStorage.setItem(GUEST_KEY, 'true');
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    if (!isSupabaseConfigured || !supabase) {
-      // Mock sign-in when Supabase keys are not set up yet in local dev demo
-      const mockUser = {
-        id: 'mock-user-1',
-        email,
-        app_metadata: {},
-        user_metadata: { name: email.split('@')[0] },
-        aud: 'authenticated',
-        created_at: new Date().toISOString(),
-      } as unknown as User;
-      setUser(mockUser);
-      setIsGuest(false);
-      localStorage.removeItem(GUEST_KEY);
-      return { error: null };
+    if (!email?.trim() || !password) {
+      return { error: new Error('Email or password is incorrect') };
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (!error) {
-      setIsGuest(false);
-      localStorage.removeItem(GUEST_KEY);
+    if (!isSupabaseConfigured || !supabase) {
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.'
+        ),
+      };
     }
-    return { error };
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (error || !data?.session || !data?.user) {
+      return { error: new Error('Email or password is incorrect') };
+    }
+
+    setUser(data.user);
+    setIsGuest(false);
+    localStorage.removeItem(GUEST_KEY);
+    return { error: null };
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-    if (!isSupabaseConfigured || !supabase) {
-      const mockUser = {
-        id: 'mock-user-1',
-        email,
-        app_metadata: {},
-        user_metadata: { name: email.split('@')[0] },
-        aud: 'authenticated',
-        created_at: new Date().toISOString(),
-      } as unknown as User;
-      setUser(mockUser);
-      setIsGuest(false);
-      localStorage.removeItem(GUEST_KEY);
-      return { error: null };
+    if (!email?.trim()) {
+      return { error: new Error('Email is required') };
+    }
+    if (!password || password.length < 6) {
+      return { error: new Error('Password must be at least 6 characters') };
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
+    if (!isSupabaseConfigured || !supabase) {
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.'
+        ),
+      };
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
       password,
       options: {
         emailRedirectTo: window.location.origin,
       },
     });
-    return { error };
+
+    if (error) {
+      return { error };
+    }
+
+    if (data?.session?.user) {
+      setUser(data.session.user);
+      setIsGuest(false);
+      localStorage.removeItem(GUEST_KEY);
+    }
+    return { error: null };
   };
 
   const signInWithGoogle = async () => {
     if (!isSupabaseConfigured || !supabase) {
-      const mockUser = {
-        id: 'mock-google-user',
-        email: 'demo-user@gmail.com',
-        app_metadata: {},
-        user_metadata: { name: 'Demo Citizen' },
-        aud: 'authenticated',
-        created_at: new Date().toISOString(),
-      } as unknown as User;
-      setUser(mockUser);
-      setIsGuest(false);
-      localStorage.removeItem(GUEST_KEY);
-      return { error: null };
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.'
+        ),
+      };
     }
 
     const { error } = await supabase.auth.signInWithOAuth({
@@ -135,10 +142,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const resetPassword = async (email: string) => {
-    if (!isSupabaseConfigured || !supabase) {
-      return { error: null };
+    if (!email?.trim()) {
+      return { error: new Error('Email is required') };
     }
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+
+    if (!isSupabaseConfigured || !supabase) {
+      return {
+        error: new Error(
+          'Authentication service is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.'
+        ),
+      };
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     return { error };
@@ -146,7 +162,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     if (supabase && isSupabaseConfigured) {
-      await supabase.auth.signOut();
+      try {
+        await supabase.auth.signOut();
+      } catch {
+        // Ignore network error on signout
+      }
     }
     setUser(null);
     setIsGuest(false);

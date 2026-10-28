@@ -80,12 +80,16 @@ export default function AuthView({
       if (mode === 'login') {
         const { error } = await signInWithEmail(email.trim(), password);
         if (error) {
-          // Do not reveal whether account exists
-          setGeneralError(
-            lang === 'kn'
-              ? 'ಇಮೇಲ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಅಮಾನ್ಯವಾಗಿದೆ'
-              : 'Invalid email or password combination'
-          );
+          if (error.message.includes('Authentication service is not configured')) {
+            setGeneralError(error.message);
+          } else {
+            // Do not reveal whether account exists
+            setGeneralError(
+              lang === 'kn'
+                ? 'ಇಮೇಲ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ'
+                : 'Email or password is incorrect'
+            );
+          }
         } else {
           onSuccess();
         }

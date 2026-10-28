@@ -45,7 +45,7 @@ function AnimatedNumber({ value, duration = 1200 }: { value: number; duration?: 
 }
 
 function App() {
-  const { user, isGuest, isAuthenticated, signOut } = useAuth();
+  const { user, isGuest, isAuthenticated, signOut, loading: authLoading } = useAuth();
   const { centres, areas, loading, error } = useData();
 
   // Read initial route and params from URL
@@ -123,11 +123,14 @@ function App() {
     const handlePopState = () => {
       const path = window.location.pathname.replace(/^\//, '');
       const validViews: ViewMode[] = ['overview', 'explorer', 'insights', 'workflows', 'cases', 'interpreter', 'navigator', 'login', 'signup'];
-      if (validViews.includes(path as ViewMode)) {
-        setView(path as ViewMode);
-      } else {
-        setView('overview');
+      const target = validViews.includes(path as ViewMode) ? (path as ViewMode) : 'overview';
+      if ((target === 'cases' || target === 'insights') && !isAuthenticated) {
+        setRedirectAfterAuth(target);
+        setView('login');
+        window.history.replaceState(null, '', `/login?returnTo=/${target}`);
+        return;
       }
+      setView(target);
       const params = new URLSearchParams(window.location.search);
       if (params.get('threshold')) setThreshold(Number(params.get('threshold')));
       if (params.get('district') !== null) setSelectedDistrict(params.get('district') || '');
@@ -144,19 +147,27 @@ function App() {
     fetchUserCases(currentUserId).then(setUserCases).catch(() => {});
   }, [user, isGuest, view]);
 
+  // Guard protected routes on initial load and on every state/route change
+  useEffect(() => {
+    if (authLoading) return;
+    const protectedViews: ViewMode[] = ['cases', 'insights'];
+    if (protectedViews.includes(view) && !isAuthenticated) {
+      setRedirectAfterAuth(view);
+      setView('login');
+      window.history.replaceState(null, '', `/login?returnTo=/${view}`);
+    }
+  }, [view, isAuthenticated, authLoading]);
+
   // Protected route guard
   const navigateToView = useCallback((targetView: ViewMode) => {
-    if (targetView === 'insights' && !isAuthenticated) {
-      setRedirectAfterAuth('insights');
+    if ((targetView === 'insights' || targetView === 'cases') && !isAuthenticated) {
+      setRedirectAfterAuth(targetView);
       setView('login');
-      return;
-    }
-    if (targetView === 'cases' && !isAuthenticated) {
-      setRedirectAfterAuth('cases');
-      setView('login');
+      window.history.replaceState(null, '', `/login?returnTo=/${targetView}`);
       return;
     }
     setView(targetView);
+    window.history.pushState(null, '', targetView === 'overview' ? '/' : `/${targetView}`);
   }, [isAuthenticated]);
 
   const handleOpenAssistant = () => {
@@ -629,15 +640,16 @@ function App() {
           {/* Guest Mode Indicator */}
           {isGuest && (
             <span
-              className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border"
+              data-testid="guest-badge"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border"
               style={{
-                background: 'var(--color-sample-badge-bg)',
-                color: 'var(--color-sample-badge)',
-                borderColor: 'var(--color-sample-badge)',
+                background: 'var(--color-surface-2)',
+                color: 'var(--color-ink-primary)',
+                borderColor: 'var(--color-border-strong)',
               }}
             >
               <User size={12} weight="bold" />
-              <span>{t('guest_demo', lang)}</span>
+              <span>Guest</span>
             </span>
           )}
 

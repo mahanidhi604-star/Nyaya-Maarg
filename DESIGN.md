@@ -74,7 +74,7 @@ gap-4: #A31D1D  (Critical isolated gap, > 75 km)
 - **Independence Notice:** "Independent civic data publication. Not a government agency or official legal services authority."
 - **Tagline:** "Mapping Karnataka's public legal aid reach" (used in header/footer, never in hero).
 - **Kannada Wordmark:** "ನ್ಯಾಯ ಮಾರ್ಗ" (Noto Sans Kannada) in footer [Flagged for native Kannada speaker verification].
-- **Signature Visual:** Straight-line path vectors connecting underserved centroids to nearest mapped centres on the real MapLibre GL JS / MapTiler vector map (`dataviz-light` and `dataviz-dark`), length representing distance gap.
+- **Signature Visual:** Straight-line path vectors connecting underserved centroids to nearest mapped centres on the offline blank map canvas (`#F8F9FA` / `#0B0D11`) with local Karnataka GeoJSON boundaries, length representing distance gap.
 
 ---
 
