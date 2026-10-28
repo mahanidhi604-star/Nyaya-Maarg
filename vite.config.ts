@@ -74,4 +74,25 @@ export default defineConfig({
     react(),
     assistantApiPlugin(),
   ],
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/')) {
+            return 'react-vendor';
+          }
+          if (id.includes('node_modules/leaflet/')) {
+            return 'leaflet-vendor';
+          }
+          if (id.includes('node_modules/recharts/')) {
+            return 'recharts-vendor';
+          }
+          if (id.includes('node_modules/@phosphor-icons/')) {
+            return 'icons';
+          }
+        },
+      },
+    },
+  },
 });
