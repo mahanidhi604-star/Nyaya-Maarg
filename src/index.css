@@ -1,0 +1,385 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;500;600&display=swap');
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+
+/* ===== DESIGN TOKENS ===== */
+@theme {
+  --color-surface-0: #FAF8F5;
+  --color-surface-1: #F1EFEB;
+  --color-surface-2: #E8E5E0;
+  --color-ink-primary: #1C1B18;
+  --color-ink-secondary: #5C5A54;
+  --color-ink-tertiary: #8A877F;
+  --color-accent: #1B7A6E;
+  --color-accent-hover: #156A5F;
+  --color-accent-subtle: #E6F5F2;
+  --color-status-danger: #C4392D;
+  --color-status-warning: #B7791F;
+  --color-status-success: #2D7A3A;
+  --color-status-info: #2563EB;
+  --color-sample-badge: #B45309;
+  --color-sample-badge-bg: #FEF3C7;
+  --color-gap-0: #F7FCB4;
+  --color-gap-1: #FEDC8B;
+  --color-gap-2: #F5A05D;
+  --color-gap-3: #E55C42;
+  --color-gap-4: #BD1B28;
+
+  --font-serif: 'Source Serif 4', 'Georgia', serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+  --font-kannada: 'Noto Sans Kannada', 'DM Sans', sans-serif;
+
+  --shadow-sm: 0 1px 2px rgba(28, 27, 24, 0.06);
+  --shadow-md: 0 2px 8px rgba(28, 27, 24, 0.08);
+  --shadow-lg: 0 8px 24px rgba(28, 27, 24, 0.10);
+  --shadow-xl: 0 16px 48px rgba(28, 27, 24, 0.12);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===== DARK MODE TOKENS ===== */
+.dark {
+  --color-surface-0: #1A1917;
+  --color-surface-1: #242320;
+  --color-surface-2: #2E2D29;
+  --color-ink-primary: #F0EDE8;
+  --color-ink-secondary: #9E9B94;
+  --color-ink-tertiary: #6B6862;
+  --color-accent: #2DD4B6;
+  --color-accent-hover: #40E0C4;
+  --color-accent-subtle: #1B2E2A;
+  --color-status-danger: #F87171;
+  --color-status-warning: #FBBF24;
+  --color-status-success: #4ADE80;
+  --color-status-info: #60A5FA;
+  --color-sample-badge: #F59E0B;
+  --color-sample-badge-bg: #422006;
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-0);
+  color: var(--color-ink-primary);
+  line-height: 1.55;
+}
+
+/* ===== TYPOGRAPHY CLASSES ===== */
+.font-display {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 3.5rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.font-h1 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 2rem;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.font-h2 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+.font-h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.font-body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.font-body-sm {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+}
+
+.font-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.font-stat {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.font-kannada {
+  font-family: var(--font-kannada);
+}
+
+/* ===== GLASS EFFECT ===== */
+.glass {
+  background: rgba(250, 248, 245, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(28, 27, 24, 0.08);
+}
+
+.dark .glass {
+  background: rgba(26, 25, 23, 0.72);
+  border-color: rgba(240, 237, 232, 0.08);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--color-surface-1);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ===== FOCUS STYLES ===== */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== SAMPLE BADGE ===== */
+.sample-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-sample-badge);
+  background-color: var(--color-sample-badge-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-sample-badge);
+}
+
+/* ===== GAP SCORE COLORS ===== */
+.gap-score-0 {
+  background-color: var(--color-gap-0);
+  color: #1C1B18;
+}
+
+.gap-score-1 {
+  background-color: var(--color-gap-1);
+  color: #1C1B18;
+}
+
+.gap-score-2 {
+  background-color: var(--color-gap-2);
+  color: #1C1B18;
+}
+
+.gap-score-3 {
+  background-color: var(--color-gap-3);
+  color: #fff;
+}
+
+.gap-score-4 {
+  background-color: var(--color-gap-4);
+  color: #fff;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-tertiary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-secondary);
+}
+
+/* ===== LEAFLET OVERRIDES ===== */
+.leaflet-container {
+  background: var(--color-surface-1);
+  font-family: var(--font-sans);
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--color-surface-0) !important;
+  color: var(--color-ink-primary) !important;
+  border: 1px solid var(--color-surface-2) !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 18px !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--color-surface-1) !important;
+}
+
+.dark .leaflet-control-zoom a {
+  background: var(--color-surface-1) !important;
+  color: var(--color-ink-primary) !important;
+  border-color: var(--color-surface-2) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(250, 248, 245, 0.8) !important;
+  font-size: 10px !important;
+  color: var(--color-ink-tertiary) !important;
+}
+
+.dark .leaflet-control-attribution {
+  background: rgba(26, 25, 23, 0.8) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  font-family: var(--font-sans) !important;
+}
+
+.leaflet-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  color: var(--color-ink-secondary) !important;
+}
+
+/* ===== SKELETON LOADING ===== */
+@keyframes skeleton-pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.skeleton {
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== SLIDER STYLES ===== */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--color-surface-2);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: 3px solid var(--color-surface-0);
+  box-shadow: var(--shadow-sm);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: 3px solid var(--color-surface-0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  body {
+    background: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .leaflet-container {
+    page-break-inside: avoid;
+  }
+}
+
+.print-only {
+  display: none;
+}

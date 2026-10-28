@@ -1,0 +1,396 @@
+[
+  {
+    "id": "apply-free-legal-aid",
+    "title": "Apply for Free Legal Aid under Legal Services Authorities Act",
+    "title_kn": "ಕಾನೂನು ಸೇವೆಗಳ ಪ್ರಾಧಿಕಾರದ ಅಡಿಯಲ್ಲಿ ಉಚಿತ ಕಾನೂನು ನೆರವಿಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ",
+    "situation_label": "I need a free court lawyer or government legal advice",
+    "situation_label_kn": "ನನಗೆ ನ್ಯಾಯಾಲಯಕ್ಕೆ ಉಚಿತ ವಕೀಲರು ಅಥವಾ ಕಾನೂನು ಸಲಹೆ ಬೇಕು",
+    "summary": "Step-by-step process for women, SC/ST, victims of disaster, or persons with annual income under ₹3,00,000 in Karnataka to obtain free advocates and dispute representation.",
+    "summary_kn": "ಮಹಿಳೆಯರು, ಎಸ್‌ಸಿ/ಎಸ್‌ಟಿ, ಸಂಕಷ್ಟಕ್ಕೊಳಗಾದವರು ಅಥವಾ ವಾರ್ಷಿಕ ₹3 ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ ಆದಾಯವಿರುವವರು ಉಚಿತ ವಕೀಲರನ್ನು ಪಡೆಯುವ ವಿಧಾನ.",
+    "who_it_is_for": "Women, children, SC/ST citizens, industrial workers, or anyone whose annual household income is below ₹3 Lakhs.",
+    "who_it_is_for_kn": "ಮಹಿಳೆಯರು, ಮಕ್ಕಳು, ಪರಿಶಿಷ್ಟ ಜಾತಿ/ಪಂಗಡದವರು, ಕಾರ್ಮಿಕರು ಅಥವಾ ₹3 ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ ಆದಾಯವಿರುವವರು.",
+    "source_url": "https://kslsa.kar.nic.in",
+    "last_verified": "2024-06-15",
+    "is_sample": true,
+    "official_links": [
+      { "label": "NALSA Online Application Portal", "url": "https://nalsa.gov.in" },
+      { "label": "Karnataka State Legal Services Authority (KSLSA)", "url": "https://kslsa.kar.nic.in" }
+    ],
+    "steps": [
+      {
+        "id": "step-eligibility",
+        "title": "1. Check Statutory Eligibility Criteria",
+        "title_kn": "೧. ಕಾನೂನುಬದ್ಧ ಅರ್ಹತಾ ಮಾನದಂಡಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
+        "what_to_do": "Confirm whether you qualify under Section 12 of the Legal Services Authorities Act. Women, children, SC/ST citizens, and custody inmates qualify automatically without income ceilings. Others must show household annual income below ₹3 Lakhs.",
+        "what_to_do_kn": "ಕಾನೂನು ಸೇವೆಗಳ ಕಾಯ್ದೆಯ ಸೆಕ್ಷನ್ 12 ರ ಅಡಿಯಲ್ಲಿ ನಿಮ್ಮ ಅರ್ಹತೆಯನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+        "where_authority": "District Legal Services Authority (DLSA) or Taluk Legal Services Committee (TLSC)",
+        "where_authority_kn": "ಜಿಲ್ಲಾ ಕಾನೂನು ಸೇವೆಗಳ ಪ್ರಾಧಿಕಾರ (DLSA) ಅಥವಾ ತಾಲ್ಲೂಕು ಸಮಿತಿ (TLSC)",
+        "documents_needed": ["Income Certificate or BPL Card", "Aadhaar Card or Voter ID", "Case or Summons copy"],
+        "documents_needed_kn": ["ಆದಾಯ ಪ್ರಮಾಣಪತ್ರ ಅಥವಾ ಬಿಪಿಎಲ್ ಕಾರ್ಡ್", "ಆಧಾರ್ ಅಥವಾ ಮತದಾರರ ಗುರುತಿನ ಚೀಟಿ", "ನ್ಯಾಯಾಲಯದ ಸಮನ್ಸ್ ಪ್ರತಿ"],
+        "typical_timeline": "1–3 Days",
+        "typical_timeline_kn": "೧-೩ ದಿನಗಳು",
+        "common_mistakes": [
+          "Paying application fees (legal aid applications are 100% free)",
+          "Assuming salaried private employees never qualify"
+        ],
+        "common_mistakes_kn": [
+          "ಅರ್ಜಿ ಶುಲ್ಕ ಪಾವತಿಸುವುದು (ಇದು ಸಂಪೂರ್ಣ ಉಚಿತ)",
+          "ಖಾಸಗಿ ನೌಕರರಿಗೆ ಇದು ಸಿಗುವುದಿಲ್ಲ ಎಂದು ಭಾವಿಸುವುದು"
+        ]
+      },
+      {
+        "id": "step-application",
+        "title": "2. Draft and Submit Application Form",
+        "title_kn": "೨. ಅರ್ಜಿ ನಮೂನೆಯನ್ನು ಭರ್ತಿ ಮಾಡಿ ಸಲ್ಲಿಸಿ",
+        "what_to_do": "Obtain standard Legal Aid Form at the Front Office of your local DLSA/TLSC in the court premises, or file online via the NALSA portal. State your grievance in clear, chronological terms.",
+        "what_to_do_kn": "ನ್ಯಾಯಾಲಯ ಸಂಕೀರ್ಣದಲ್ಲಿರುವ DLSA ಕಚೇರಿಯಿಂದ ಉಚಿತ ಅರ್ಜಿ ನಮೂನೆ ಪಡೆದು ಭರ್ತಿ ಮಾಡಿ.",
+        "where_authority": "DLSA Front Office (District Court Complex)",
+        "where_authority_kn": "ಜಿಲ್ಲಾ ನ್ಯಾಯಾಲಯ ಸಂಕೀರ್ಣದಲ್ಲಿರುವ DLSA ಕಚೇರಿ",
+        "documents_needed": ["Filled Form", "Photocopies of dispute documents", "Self-declaration affidavit"],
+        "documents_needed_kn": ["ಭರ್ತಿ ಮಾಡಿದ ಅರ್ಜಿ", "ಸಂಬಂಧಿತ ದಾಖಲೆಗಳ ಜೆರಾಕ್ಸ್", "ಸ್ವಯಂ ಘೋಷಣಾಪತ್ರ"],
+        "typical_timeline": "3–7 Business Days",
+        "typical_timeline_kn": "೩-೭ ಕೆಲಸದ ದಿನಗಳು",
+        "common_mistakes": [
+          "Submitting original documents instead of photocopies",
+          "Leaving out contact telephone numbers"
+        ],
+        "common_mistakes_kn": [
+          "ಜೆರಾಕ್ಸ್ ಬದಲಿಗೆ ಅಸಲಿ ದಾಖಲೆಗಳನ್ನು ನೀಡುವುದು",
+          "ಸಂಪರ್ಕ ದೂರವಾಣಿ ಸಂಖ್ಯೆ ನಮೂದಿಸದೇ ಇರುವುದು"
+        ]
+      },
+      {
+        "id": "step-lawyer-assign",
+        "title": "3. Assignment of Legal Aid Counsel",
+        "title_kn": "೩. ಪ್ಯಾನೆಲ್ ವಕೀಲರ ನಿಯೋಜನೆ",
+        "what_to_do": "Once the Member Secretary approves your application, an appointed panel advocate will contact you for a preliminary interview. You pay ₹0 for court fees and advocate representation.",
+        "what_to_do_kn": "ಅರ್ಜಿ ಅಂಗೀಕಾರವಾದ ನಂತರ, ಸರ್ಕಾರಿ ಪ್ಯಾನೆಲ್ ವಕೀಲರನ್ನು ನಿಯೋಜಿಸಲಾಗುತ್ತದೆ. ಯಾವುದೇ ಶುಲ್ಕ ನೀಡಬೇಕಾಗಿಲ್ಲ.",
+        "where_authority": "Assigned Panel Advocate Chambers / DLSA Office",
+        "where_authority_kn": "ನಿಯೋಜಿತ ವಕೀಲರ ಕಚೇರಿ",
+        "documents_needed": ["All case files", "Notice copies received"],
+        "documents_needed_kn": ["ಪ್ರಕರಣದ ಎಲ್ಲಾ ಕಡತಗಳು", "ಸ್ವೀಕರಿಸಿದ ನೋಟಿಸ್ ಪ್ರತಿ"],
+        "typical_timeline": "7–14 Days",
+        "typical_timeline_kn": "೭-೧೪ ದಿನಗಳು",
+        "common_mistakes": [
+          "Allowing an appointed panel lawyer to ask for private out-of-pocket fees",
+          "Missing scheduled briefing appointments"
+        ],
+        "common_mistakes_kn": [
+          "ನಿಯೋಜಿತ ವಕೀಲರು ಪ್ರತ್ಯೇಕ ಶುಲ್ಕ ಕೇಳಿದರೆ ಪಾವತಿಸುವುದು",
+          "ಸಮಾಲೋಚನೆ ದಿನಾಂಕಕ್ಕೆ ಗೈರುಹಾಜರಾಗುವುದು"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "recover-rental-deposit",
+    "title": "Recover Unreturned Rental Deposit in Karnataka",
+    "title_kn": "ಕರ್ನಾಟಕದಲ್ಲಿ ವಾಪಸ್ ಬಾರದ ಬಾಡಿಗೆ ಮುಂಗಡ (ಡೆಪಾಸಿಟ್) ವಸೂಲಾತಿ",
+    "situation_label": "My landlord vacated me but refuses to refund my security deposit",
+    "situation_label_kn": "ನಾನು ಮನೆ ಖಾಲಿ ಮಾಡಿದರೂ ಮಾಲೀಕರು ಡೆಪಾಸಿಟ್ ವಾಪಸ್ ನೀಡುತ್ತಿಲ್ಲ",
+    "summary": "Procedural path under Karnataka Rent Act and Civil Contract Law to serve formal demand notice, approach mediation, or file for recovery.",
+    "summary_kn": "ಮನೆ ಮಾಲೀಕರಿಗೆ ಕಾನೂನು ನೋಟಿಸ್ ಕಳುಹಿಸಿ, ಮಧ್ಯಸ್ಥಿಕೆ ಅಥವಾ ನ್ಯಾಯಾಲಯದ ಮೂಲಕ ಡೆಪಾಸಿಟ್ ವಾಪಸ್ ಪಡೆಯುವ ಹಂತಗಳು.",
+    "who_it_is_for": "Tenants in Bengaluru, Mysuru, and urban Karnataka who surrendered peaceful possession but face unjustified deposit retention.",
+    "who_it_is_for_kn": "ಮನೆ ಖಾಲಿ ಮಾಡಿದರೂ ಡೆಪಾಸಿಟ್ ಪಡೆಯಲು ಹೆಣಗಾಡುತ್ತಿರುವ ರಾಜ್ಯದ ಬಾಡಿಗೆದಾರರು.",
+    "source_url": "https://districts.ecourts.gov.in/karnataka",
+    "last_verified": "2024-05-10",
+    "is_sample": true,
+    "official_links": [
+      { "label": "Bengaluru Mediation Centre", "url": "https://karnatakamediation.kar.nic.in" },
+      { "label": "eCourts Services", "url": "https://ecourts.gov.in" }
+    ],
+    "steps": [
+      {
+        "id": "step-inventory",
+        "title": "1. Evidence Compilation & Written Demand",
+        "title_kn": "೧. ಸಾಕ್ಷ್ಯಾಧಾರಗಳ ಸಂಗ್ರಹ ಮತ್ತು ಲಿಖಿತ ಬೇಡಿಕೆ",
+        "what_to_do": "Compile your rental agreement, bank statements proving deposit transfer, exit inspection photos/videos, and electricity/water clearance slips. Send an email and registered post demand giving 7 to 15 days to refund.",
+        "what_to_do_kn": "ಬಾಡಿಗೆ ಒಪ್ಪಂದ, ಹಣ ವರ್ಗಾವಣೆ ರಶೀದಿ ಮತ್ತು ಮನೆ ಒಪ್ಪಿಸಿದ ಫೋಟೋಗಳನ್ನು ಒಗ್ಗೂಡಿಸಿ ನೋಟಿಸ್ ಕಳುಹಿಸಿ.",
+        "where_authority": "Landlord communication (Speed Post / Registered Post AD)",
+        "where_authority_kn": "ಸ್ಪೀಡ್ ಪೋಸ್ಟ್ ಮೂಲಕ ಮಾಲೀಕರಿಗೆ",
+        "documents_needed": ["Rental Agreement", "Deposit Transfer Proof (UPI/NEFT)", "Key Handover Proof", "Utility Clearance Receipts"],
+        "documents_needed_kn": ["ಬಾಡಿಗೆ ಕರಾರು ಪತ್ರ", "ಹಣ ಪಾವತಿಸಿದ ಬ್ಯಾಂಕ್ ದಾಖಲೆ", "ಕೀಲಿ ಹಸ್ತಾಂತರ ದಾಖಲೆ"],
+        "typical_timeline": "7–15 Days",
+        "typical_timeline_kn": "೭-೧೫ ದಿನಗಳು",
+        "common_mistakes": [
+          "Relying solely on verbal phone discussions without email/WhatsApp paper trail",
+          "Not preserving post office tracking slips"
+        ],
+        "common_mistakes_kn": [
+          "ಬರೆಹ ರೂಪದ ಪುರಾವೆ ಇಲ್ಲದೆ ಬರೀ ಮಾತಿನಲ್ಲಿ ವ್ಯವಹರಿಸುವುದು",
+          "ಅಂಚೆ ರಶೀದಿ ಕಳೆದುಕೊಳ್ಳುವುದು"
+        ]
+      },
+      {
+        "id": "step-legal-notice",
+        "title": "2. Formal Legal Notice via Advocate or DLSA",
+        "title_kn": "೨. ವಕೀಲರು ಅಥವಾ DLSA ಮೂಲಕ ಕಾನೂನು ನೋಟಿಸ್",
+        "what_to_do": "If the demand period lapses without payment, engage an advocate or visit the DLSA clinic to issue a formal Legal Notice demanding return of principal with statutory interest.",
+        "what_to_do_kn": "ಮಾಲೀಕರು ಸ್ಪಂದಿಸದಿದ್ದರೆ ಅಧಿಕೃತ ಕಾನೂನು ನೋಟಿಸ್ ಕಳುಹಿಸಿ.",
+        "where_authority": "Advocate Chambers or DLSA Legal Clinic",
+        "where_authority_kn": "ವಕೀಲರ ಕಚೇರಿ ಅಥವಾ DLSA ಕ್ಲಿನಿಕ್",
+        "documents_needed": ["Copy of Prior Demand", "Postal Delivery Acknowledgment", "Rental Agreement"],
+        "documents_needed_kn": ["ಹಿಂದಿನ ಬೇಡಿಕೆ ಪ್ರತಿ", "ಅಂಚೆ ತಲುಪಿದ ರಶೀದಿ", "ಬಾಡಿಗೆ ಒಪ್ಪಂದ"],
+        "typical_timeline": "15 Days for Reply",
+        "typical_timeline_kn": "೧೫ ದಿನಗಳ ಗಡುವು",
+        "common_mistakes": [
+          "Threatening criminal FIR for what is primarily a civil contractual dispute",
+          "Exaggerating deductions without basis"
+        ],
+        "common_mistakes_kn": [
+          "ಸಿವಿಲ್ ವಿವಾದಕ್ಕೆ ಕ್ರಿಮಿನಲ್ ಬೆದರಿಕೆ ಹಾಕುವುದು"
+        ]
+      },
+      {
+        "id": "step-mediation",
+        "title": "3. Pre-Litigation Mediation or Small Causes Court",
+        "title_kn": "೩. ಪೂರ್ವ ಮಧ್ಯಸ್ಥಿಕೆ ಅಥವಾ ಸಿವಿಲ್ ಕೋರ್ಟ್ ದಾವೆ",
+        "what_to_do": "File a Pre-Litigation Mediation petition before DLSA / Bengaluru Mediation Centre. If unresolved, file a summary recovery suit under Order 37 CPC in the Small Causes Court.",
+        "what_to_do_kn": "ಮಧ್ಯಸ್ಥಿಕೆ ಕೇಂದ್ರಕ್ಕೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ ಅಥವಾ ಸಣ್ಣ ವ್ಯಾಜ್ಯಗಳ ನ್ಯಾಯಾಲಯದಲ್ಲಿ ದಾವೆ ಹೂಡಿ.",
+        "where_authority": "Bengaluru Mediation Centre / District Small Causes Court",
+        "where_authority_kn": "ಮಧ್ಯಸ್ಥಿಕೆ ಕೇಂದ್ರ / ಸಿವಿಲ್ ನ್ಯಾಯಾಲಯ",
+        "documents_needed": ["Original Agreement", "Notice and Reply", "Bank Statements"],
+        "documents_needed_kn": ["ಮೂಲ ಒಪ್ಪಂದ", "ನೋಟಿಸ್ ಮತ್ತು ಉತ್ತರ", "ಬ್ಯಾಂಕ್ ದಾಖಲೆ"],
+        "typical_timeline": "1–3 Months (Mediation) / 6–12 Months (Court)",
+        "typical_timeline_kn": "೧-೩ ತಿಂಗಳು (ಮಧ್ಯಸ್ಥಿಕೆ)",
+        "common_mistakes": [
+          "Failing to appear in mediation sessions",
+          "Accepting unsubstantiated painting deductions without bill verification"
+        ],
+        "common_mistakes_kn": [
+          "ಮಧ್ಯಸ್ಥಿಕೆ ಸಭೆಗಳಿಗೆ ಗೈರಾಗುವುದು"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "file-consumer-complaint",
+    "title": "File a Consumer Dispute Complaint on e-Daakhil",
+    "title_kn": "ಇ-ದಾಖಿಲ್ ಮೂಲಕ ಗ್ರಾಹಕರ ವ್ಯಾಜ್ಯ ದೂರು ದಾಖಲಿಸಿ",
+    "situation_label": "A merchant, builder, or service provider sold defective goods or refused refund",
+    "situation_label_kn": "ವ್ಯಾಪಾರಿ ಅಥವಾ ಕಂಪನಿಯು ದೋಷಪೂರಿತ ಸೇವೆ ನೀಡಿ ಹಣ ಮರುಪಾವತಿಸಲು ನಿರಾಕರಿಸಿದೆ",
+    "summary": "How to file a formal grievance under the Consumer Protection Act 2019 using the e-Daakhil digital portal or physical District Commission.",
+    "summary_kn": "ಗ್ರಾಹಕ ಸಂರಕ್ಷಣಾ ಕಾಯ್ದೆ 2019 ರ ಅಡಿಯಲ್ಲಿ ಜಿಲ್ಲಾ ಆಯೋಗಕ್ಕೆ ಸುಲಭವಾಗಿ ದೂರು ದಾಖಲಿಸುವ ಮಾರ್ಗಸೂಚಿ.",
+    "who_it_is_for": "Anyone who bought goods or hired services for consideration and suffered deficiency in service or unfair trade practice.",
+    "who_it_is_for_kn": "ಸೇವೆ ಅಥವಾ ಸರಕುಗಳಲ್ಲಿ ಲೋಪ ಅನುಭವಿಸಿದ ಯಾವುದೇ ಗ್ರಾಹಕರು.",
+    "source_url": "https://edaakhil.nic.in",
+    "last_verified": "2024-04-20",
+    "is_sample": true,
+    "official_links": [
+      { "label": "e-Daakhil Online Filing Portal", "url": "https://edaakhil.nic.in" },
+      { "label": "National Consumer Helpline (NCH)", "url": "https://consumerhelpline.gov.in" }
+    ],
+    "steps": [
+      {
+        "id": "step-nch-complaint",
+        "title": "1. Pre-Litigation Call to National Consumer Helpline",
+        "title_kn": "೧. ರಾಷ್ಟ್ರೀಯ ಗ್ರಾಹಕ ಸಹಾಯವಾಣಿಗೆ ಕರೆ / ದೂರು",
+        "what_to_do": "Call toll-free 1915 or lodge an initial ticket on consumerhelpline.gov.in. Many companies resolve disputes during this formal intermediary stage within 30 days.",
+        "what_to_do_kn": "ಉಚಿತ ಸಹಾಯವಾಣಿ 1915 ಗೆ ಕರೆ ಮಾಡಿ ಅಥವಾ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ದೂರು ದಾಖಲಿಸಿ.",
+        "where_authority": "National Consumer Helpline (DoCA)",
+        "where_authority_kn": "ರಾಷ್ಟ್ರೀಯ ಗ್ರಾಹಕ ಸಹಾಯವಾಣಿ (NCH)",
+        "documents_needed": ["Invoice / Purchase Bill", "Proof of Payment", "Communication Logs"],
+        "documents_needed_kn": ["ಖರೀದಿ ಬಿಲ್", "ಪಾವತಿ ರಶೀದಿ", "ಇಮೇಲ್ ಸಂದೇಶಗಳು"],
+        "typical_timeline": "15–30 Days",
+        "typical_timeline_kn": "೧೫-೩೦ ದಿನಗಳು",
+        "common_mistakes": [
+          "Not keeping ticket reference ID",
+          "Waiting past the 2-year limitation period from cause of action"
+        ],
+        "common_mistakes_kn": [
+          "ಟಿಕೆಟ್ ಸಂಖ್ಯೆಯನ್ನು ಉಳಿಸಿಕೊಳ್ಳದಿರುವುದು",
+          "೨ ವರ್ಷಗಳ ಕಾಲಮಿತಿ ಮೀರುವುದು"
+        ]
+      },
+      {
+        "id": "step-notice-before-filing",
+        "title": "2. Issue 15-Day Legal Demand Notice",
+        "title_kn": "೨. ೧೫ ದಿನಗಳ ಪೂರ್ವಭಾವಿ ನೋಟಿಸ್",
+        "what_to_do": "Send a registered notice specifying the deficiency, requesting replacement, rectification, or refund plus compensation within 15 days.",
+        "what_to_do_kn": "ಸಮಸ್ಯೆ ಸರಿಪಡಿಸಲು ಕಂಪನಿಗೆ ೧೫ ದಿನಗಳ ಲಿಖಿತ ನೋಟಿಸ್ ನೀಡಿ.",
+        "where_authority": "Sent to Registered Office of Seller / Provider",
+        "where_authority_kn": "ಕಂಪನಿಯ ನೋಂದಾಯಿತ ವಿಳಾಸಕ್ಕೆ",
+        "documents_needed": ["Invoice", "Written Defect Log", "Warranty Card"],
+        "documents_needed_kn": ["ಬಿಲ್", "ವಾರೆಂಟಿ ಕಾರ್ಡ್", "ನೋಟಿಸ್ ಪ್ರತಿ"],
+        "typical_timeline": "15 Days",
+        "typical_timeline_kn": "೧೫ ದಿನಗಳು",
+        "common_mistakes": ["Not sending to the official registered address"],
+        "common_mistakes_kn": ["ಅಧಿಕೃತ ವಿಳಾಸಕ್ಕೆ ಕಳುಹಿಸದಿರುವುದು"]
+      },
+      {
+        "id": "step-edaakhil-filing",
+        "title": "3. File on e-Daakhil Portal",
+        "title_kn": "೩. ಇ-ದಾಖಿಲ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ದೂರು ದಾಖಲಿಸಿ",
+        "what_to_do": "Register on edaakhil.nic.in, select your District Consumer Disputes Redressal Commission (DCDRC), upload the petition with verification affidavit, and pay nominal fees via Bharatkosh.",
+        "what_to_do_kn": "ಇ-ದಾಖಿಲ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಜಿಲ್ಲಾ ಗ್ರಾಹಕ ಆಯೋಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ.",
+        "where_authority": "District Consumer Disputes Redressal Commission (DCDRC)",
+        "where_authority_kn": "ಜಿಲ್ಲಾ ಗ್ರಾಹಕ ವ್ಯಾಜ್ಯಗಳ ಪರಿಹಾರ ಆಯೋಗ",
+        "documents_needed": ["Complaint Petition", "Affidavit", "List of Dates and Events", "Index and Evidence"],
+        "documents_needed_kn": ["ದೂರು ಅರ್ಜಿ", "ಅಫಿಡವಿಟ್", "ದಿನಾಂಕಗಳ ವಿವರ", "ಪುರಾವೆಗಳು"],
+        "typical_timeline": "3–6 Months",
+        "typical_timeline_kn": "೩-೬ ತಿಂಗಳು",
+        "common_mistakes": [
+          "Filing in wrong jurisdiction (file where complainant resides or where opposite party works)",
+          "Claiming damages exceeding pecuniary limits"
+        ],
+        "common_mistakes_kn": [
+          "ತಪ್ಪು ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ದೂರು ದಾಖಲಿಸುವುದು"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unpaid-wages-complaint",
+    "title": "Claim Unpaid Wages under Payment of Wages Act",
+    "title_kn": "ವೇತನ ಪಾವತಿ ಕಾಯ್ದೆಯಡಿ ಪಾವತಿಯಾಗದ ಸಂಬಳ ವಸೂಲಾತಿ",
+    "situation_label": "My employer or contractor terminated me or withheld my earned salary",
+    "situation_label_kn": "ನನ್ನ ಉದ್ಯೋಗದಾತರು ನನ್ನ ಸಂಬಳವನ್ನು ನೀಡದೆ ಬಾಕಿ ಉಳಿಸಿಕೊಂಡಿದ್ದಾರೆ",
+    "summary": "How workers and employees can approach the Labour Officer / Payment of Wages Authority in Karnataka to recover withheld compensation.",
+    "summary_kn": "ಕರ್ನಾಟಕ ಕಾರ್ಮಿಕ ಅಧಿಕಾರಿ ಅಥವಾ ನ್ಯಾಯಮಂಡಳಿಯ ಮೂಲಕ ಬಾಕಿ ಸಂಬಳವನ್ನು ಮರಳಿ ಪಡೆಯುವ ವಿಧಾನ.",
+    "who_it_is_for": "Daily wage earners, contract staff, and employees whose monthly wages are wrongfully withheld.",
+    "who_it_is_for_kn": "ವೇತನ ಪಡೆಯದ ಗುತ್ತಿಗೆ ಕಾರ್ಮಿಕರು, ನೌಕರರು ಮತ್ತು ದಿನಗೂಲಿ ನೌಕರರು.",
+    "source_url": "https://labour.karnataka.gov.in",
+    "last_verified": "2024-05-01",
+    "is_sample": true,
+    "official_links": [
+      { "label": "Karnataka Labour Department Portal", "url": "https://labour.karnataka.gov.in" },
+      { "label": "Ministry of Labour & Employment", "url": "https://labour.gov.in" }
+    ],
+    "steps": [
+      {
+        "id": "step-gather-attendance",
+        "title": "1. Collect Employment Proof and Attendance Records",
+        "title_kn": "೧. ಉದ್ಯೋಗ ಮತ್ತು ಹಾಜರಾತಿ ದಾಖಲೆಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ",
+        "what_to_do": "Secure appointment letters, ID cards, salary credit slips, bank statements, work emails, and attendance log extracts showing active duty dates.",
+        "what_to_do_kn": "ನೇಮಕಾತಿ ಪತ್ರ, ಗುರುತಿನ ಚೀಟಿ, ವೇತನ ಪಾವತಿ ಬ್ಯಾಂಕ್ ದಾಖಲೆಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ.",
+        "where_authority": "Personal record keeping",
+        "where_authority_kn": "ವೈಯಕ್ತಿಕ ದಾಖಲೆ ಸಂಗ್ರಹ",
+        "documents_needed": ["Offer Letter / Appointment Letter", "Bank Statement", "ID Card Copy", "WhatsApp / Email confirmations"],
+        "documents_needed_kn": ["ನೇಮಕಾತಿ ಪತ್ರ", "ಬ್ಯಾಂಕ್ ಸ್ಟೇಟ್‌ಮೆಂಟ್", "ಗುರುತಿನ ಚೀಟಿ"],
+        "typical_timeline": "1–3 Days",
+        "typical_timeline_kn": "೧-೩ ದಿನಗಳು",
+        "common_mistakes": [
+          "Waiting until company email account is terminated before downloading wage slips"
+        ],
+        "common_mistakes_kn": [
+          "ಕಂಪನಿ ಇಮೇಲ್ ರದ್ದಾಗುವ ಮೊದಲು ವೇತನ ಚೀಟಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿಕೊಳ್ಳದಿರುವುದು"
+        ]
+      },
+      {
+        "id": "step-labour-commissioner",
+        "title": "2. File Grievance with Assistant Labour Commissioner (ALC)",
+        "title_kn": "೨. ಸಹಾಯಕ ಕಾರ್ಮಿಕ ಆಯುಕ್ತರಿಗೆ (ALC) ದೂರು ಸಲ್ಲಿಸಿ",
+        "what_to_do": "Submit Form A claim under Section 15 of Payment of Wages Act or Section 20 of Minimum Wages Act at your sub-divisional Labour Department office.",
+        "what_to_do_kn": "ನಿಮ್ಮ ತಾಲೂಕು/ಜಿಲ್ಲಾ ಕಾರ್ಮಿಕ ಅಧಿಕಾರಿಯ ಕಚೇರಿಯಲ್ಲಿ ನಿಗದಿತ ನಮೂನೆಯಲ್ಲಿ ದೂರು ನೀಡಿ.",
+        "where_authority": "Office of Assistant Labour Commissioner (ALC) / Labour Officer",
+        "where_authority_kn": "ಸಹಾಯಕ ಕಾರ್ಮಿಕ ಆಯುಕ್ತರ ಕಚೇರಿ (ALC)",
+        "documents_needed": ["Claim Form", "Computation of Dues", "Notice to Employer", "Proof of Service"],
+        "documents_needed_kn": ["ಅರ್ಜಿ ನಮೂನೆ", "ಬಾಕಿ ಮೊತ್ತದ ಲೆಕ್ಕಾಚಾರ", "ಉದ್ಯೋಗದ ಪುರಾವೆ"],
+        "typical_timeline": "15–45 Days for Conciliation",
+        "typical_timeline_kn": "೧೫-೪೫ ದಿನಗಳು",
+        "common_mistakes": [
+          "Filing after 12 months without explanation for condonation of delay"
+        ],
+        "common_mistakes_kn": [
+          "೧೨ ತಿಂಗಳ ನಂತರ ವಿಳಂಬಕ್ಕೆ ಕಾರಣ ನೀಡದೆ ದೂರು ನೀಡುವುದು"
+        ]
+      },
+      {
+        "id": "step-recovery-certificate",
+        "title": "3. Conciliation & Recovery Certificate Issuance",
+        "title_kn": "೩. ಸಂಧಾನ ಮತ್ತು ವಸೂಲಾತಿ ಪ್ರಮಾಣಪತ್ರ",
+        "what_to_do": "Attend conciliation hearings. If the employer refuses settlement, the Labour Authority issues a Recovery Certificate directed to the Revenue Collector to recover dues as land revenue arrears.",
+        "what_to_do_kn": "ಸಂಧಾನ ಸಭೆಗಳಲ್ಲಿ ಭಾಗವಹಿಸಿ. ಮಾಲೀಕರು ಬರದಿದ್ದರೆ ವಸೂಲಾತಿ ಆದೇಶ ಜಾರಿಯಾಗುತ್ತದೆ.",
+        "where_authority": "Labour Court / Deputy Commissioner Revenue Branch",
+        "where_authority_kn": "ಕಾರ್ಮಿಕ ನ್ಯಾಯಾಲಯ / ಜಿಲ್ಲಾಧಿಕಾರಿ ಕಂದಾಯ ಶಾಖೆ",
+        "documents_needed": ["Conciliation Failure Report", "Signed Claim Affidavit"],
+        "documents_needed_kn": ["ಸಂಧಾನ ವರದಿ", "ಪ್ರಮಾಣಪತ್ರ"],
+        "typical_timeline": "2–6 Months",
+        "typical_timeline_kn": "೨-೬ ತಿಂಗಳು",
+        "common_mistakes": ["Not following up with the Tahsildar / Revenue office on recovery warrants"],
+        "common_mistakes_kn": ["ಕಂದಾಯ ಕಚೇರಿಯಿಂದ ವಸೂಲಾತಿ ಬಗ್ಗೆ ಪರಿಶೀಲನೆ ಮಾಡದಿರುವುದು"]
+      }
+    ]
+  },
+  {
+    "id": "file-rti-request",
+    "title": "File a Right to Information (RTI) Request in Karnataka",
+    "title_kn": "ಕರ್ನಾಟಕದಲ್ಲಿ ಮಾಹಿತಿ ಹಕ್ಕು (RTI) ಅರ್ಜಿ ಸಲ್ಲಿಸಿ",
+    "situation_label": "I need government records, inspection notes, or status on delayed civic work",
+    "situation_label_kn": "ನನಗೆ ಸರ್ಕಾರಿ ಕಡತಗಳು ಅಥವಾ ವಿಳಂಬವಾದ ಸಾರ್ವಜನಿಕ ಕೆಲಸದ ಮಾಹಿತಿ ಬೇಕು",
+    "summary": "How to file an RTI request under RTI Act 2005 through Mahiti Kanaja / Karnataka RTI Online or by physical Form A with court fee stamp.",
+    "summary_kn": "ಮಾಹಿತಿ ಹಕ್ಕು ಕಾಯ್ದೆ 2005 ರ ಅಡಿಯಲ್ಲಿ ಕರ್ನಾಟಕ ಸರ್ಕಾರಿ ಇಲಾಖೆಗಳಿಂದ ಅಧಿಕೃತ ಮಾಹಿತಿ ಪಡೆಯುವ ಹಂತಗಳು.",
+    "who_it_is_for": "Any Indian citizen seeking official documents from Karnataka state public authorities.",
+    "who_it_is_for_kn": "ಸರ್ಕಾರಿ ಇಲಾಖೆಗಳಿಂದ ಅಧಿಕೃತ ಮಾಹಿತಿ ಬಯಸುವ ಭಾರತದ ಯಾವುದೇ ನಾಗರಿಕರು.",
+    "source_url": "https://rtionline.karnataka.gov.in",
+    "last_verified": "2024-05-25",
+    "is_sample": true,
+    "official_links": [
+      { "label": "Karnataka RTI Online Portal", "url": "https://rtionline.karnataka.gov.in" },
+      { "label": "Karnataka Information Commission (KIC)", "url": "https://kic.karnataka.gov.in" }
+    ],
+    "steps": [
+      {
+        "id": "step-identify-pio",
+        "title": "1. Identify the Public Information Officer (PIO)",
+        "title_kn": "೧. ಸಾರ್ವಜನಿಕ ಮಾಹಿತಿ ಅಧಿಕಾರಿಯನ್ನು (PIO) ಗುರುತಿಸಿ",
+        "what_to_do": "Determine which Department, Directorate, or Municipal Office holds the file (e.g., BBMP, Bescom, Tahsildar). Address your application to the Public Information Officer (PIO) of that specific department.",
+        "what_to_do_kn": "ಮಾಹಿತಿ ಹೊಂದಿರುವ ಇಲಾಖೆಯ ಸಾರ್ವಜನಿಕ ಮಾಹಿತಿ ಅಧಿಕಾರಿಯನ್ನು (PIO) ಗುರುತಿಸಿ.",
+        "where_authority": "Designated PIO of the Concerned Department",
+        "where_authority_kn": "ಸಂಬಂಧಪಟ್ಟ ಇಲಾಖೆಯ PIO",
+        "documents_needed": ["Specific file numbers, dates, or scheme names if known"],
+        "documents_needed_kn": ["ಕಡತ ಸಂಖ್ಯೆ ಅಥವಾ ದಿನಾಂಕಗಳು (ಗೊತ್ತಿದ್ದಲ್ಲಿ)"],
+        "typical_timeline": "1 Day",
+        "typical_timeline_kn": "೧ ದಿನ",
+        "common_mistakes": [
+          "Asking 'Why' or requesting opinions instead of asking for certified copies of records",
+          "Sending one generic RTI to multiple unrelated departments"
+        ],
+        "common_mistakes_kn": [
+          "ಅಭಿಪ್ರಾಯ ಕೇಳುವುದು (ದಾಖಲೆಗಳ ಪ್ರತಿಗಳನ್ನು ಮಾತ್ರ ಕೇಳಬೇಕು)",
+          "ಒಂದೇ ಅರ್ಜಿಯಲ್ಲಿ ಹಲವು ಇಲಾಖೆಗಳ ಮಾಹಿತಿ ಕೇಳುವುದು"
+        ]
+      },
+      {
+        "id": "step-submit-application",
+        "title": "2. Draft and Submit Form A with ₹10 Fee",
+        "title_kn": "೨. ನಮೂನೆ A ಭರ್ತಿ ಮಾಡಿ ₹10 ಶುಲ್ಕದೊಂದಿಗೆ ಸಲ್ಲಿಸಿ",
+        "what_to_do": "File online at rtionline.karnataka.gov.in or write on plain paper (Form A). Affix a ₹10 Court Fee Stamp or attach a ₹10 Indian Postal Order (IPO). BPL card holders pay zero fee.",
+        "what_to_do_kn": "ಆನ್‌ಲೈನ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ಅಥವಾ ಕಾಗದದ ಮೇಲೆ ₹10 ಕೋರ್ಟ್ ಫೀ ಸ್ಟ್ಯಾಂಪ್ ಹಚ್ಚಿ ಸಲ್ಲಿಸಿ.",
+        "where_authority": "RTI Online Portal or Post Office Registered AD",
+        "where_authority_kn": "ಆನ್‌ಲೈನ್ ಪೋರ್ಟಲ್ ಅಥವಾ ಅಂಚೆ ಮೂಲಕ",
+        "documents_needed": ["Form A Application", "₹10 Court Fee Stamp or IPO", "BPL Card Copy (if exempt)"],
+        "documents_needed_kn": ["ಅರ್ಜಿ ನಮೂನೆ A", "₹10 ಕೋರ್ಟ್ ಫೀ ಸ್ಟ್ಯಾಂಪ್", "ಬಿಪಿಎಲ್ ಕಾರ್ಡ್ (ಇದ್ದರೆ)"],
+        "typical_timeline": "30 Days Statutory Deadline (48 hours for life & liberty)",
+        "typical_timeline_kn": "೩೦ ದಿನಗಳ ಕಾಲಮಿತಿ",
+        "common_mistakes": [
+          "Not preserving postal delivery acknowledgment or online acknowledgment slip",
+          "Writing vague, rambling questions exceeding 500 words"
+        ],
+        "common_mistakes_kn": [
+          "ಅರ್ಜಿ ತಲುಪಿದ ರಶೀದಿ ಇಟ್ಟುಕೊಳ್ಳದಿರುವುದು"
+        ]
+      },
+      {
+        "id": "step-first-appeal",
+        "title": "3. File First Appeal if Denied or Delayed",
+        "title_kn": "೩. ಮಾಹಿತಿ ಬಾರದಿದ್ದರೆ ಪ್ರಥಮ ಮೇಲ್ಮನವಿ ಸಲ್ಲಿಸಿ",
+        "what_to_do": "If no reply arrives within 30 days, or if information is falsely withheld, file a First Appeal before the First Appellate Authority (FAA) within 30 days. No fee is required for first appeal.",
+        "what_to_do_kn": "೩೦ ದಿನಗಳಲ್ಲಿ ಮಾಹಿತಿ ಬಾರದಿದ್ದರೆ ಪ್ರಥಮ ಮೇಲ್ಮನವಿ ಪ್ರಾಧಿಕಾರಕ್ಕೆ ಮೇಲ್ಮನವಿ ಸಲ್ಲಿಸಿ.",
+        "where_authority": "First Appellate Authority (Senior Officer of the Department)",
+        "where_authority_kn": "ಪ್ರಥಮ ಮೇಲ್ಮನವಿ ಪ್ರಾಧಿಕಾರ (FAA)",
+        "documents_needed": ["Copy of Original RTI Application", "Proof of Dispatch / Acknowledgment", "Rejection Order (if any)"],
+        "documents_needed_kn": ["ಮೂಲ ಅರ್ಜಿಯ ಪ್ರತಿ", "ಅಂಚೆ ರಶೀದಿ", "ತಿರಸ್ಕಾರ ಪತ್ರ (ಇದ್ದರೆ)"],
+        "typical_timeline": "30–45 Days for Disposal",
+        "typical_timeline_kn": "೩೦-೪೫ ದಿನಗಳು",
+        "common_mistakes": [
+          "Missing the 30-day window to file the First Appeal",
+          "Approaching State Information Commission directly before First Appeal"
+        ],
+        "common_mistakes_kn": [
+          "೩೦ ದಿನಗಳ ಗಡುವು ತಪ್ಪಿಸುವುದು"
+        ]
+      }
+    ]
+  }
+]
