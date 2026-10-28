@@ -482,7 +482,8 @@ function App() {
     <div className="min-h-screen" style={{ background: 'var(--color-surface-0)', color: 'var(--color-ink-primary)' }}>
       {/* ===== HEADER ===== */}
       <header
-        className="no-print sticky top-0 z-50 border-b h-16 md:h-[72px] px-4 md:px-8 flex items-center justify-between gap-4 backdrop-blur-md bg-[var(--color-surface-0)]/95 border-[var(--color-surface-2)]"
+        className="no-print sticky top-0 border-b h-16 md:h-[72px] px-4 md:px-8 flex items-center justify-between gap-4 backdrop-blur-md bg-[var(--color-surface-0)]/95 border-[var(--color-surface-2)]"
+        style={{ zIndex: 'var(--z-header, 50)' }}
       >
         <div className="flex items-center gap-4">
           <button
@@ -499,7 +500,7 @@ function App() {
         </div>
 
         {/* Nav tabs (<= 5 primary items) */}
-        <nav className="hidden md:flex items-center gap-1 rounded-lg p-1 bg-[var(--color-surface-1)] border border-[var(--color-surface-2)]">
+        <nav className="hidden lg:flex items-center gap-1 rounded-lg p-1 bg-[var(--color-surface-1)] border border-[var(--color-surface-2)]">
           <button
             onClick={() => navigateToView('overview')}
             className="flex items-center gap-1 px-3.5 py-1.5 rounded-md text-sm font-medium transition-all"
@@ -576,9 +577,10 @@ function App() {
 
             {myHelpMenuOpen && (
               <div
-                className="absolute left-0 mt-1.5 w-52 py-2 rounded-xl border shadow-lg z-50 text-xs surface-card"
+                className="absolute left-0 mt-1.5 w-52 py-2 rounded-xl border shadow-lg text-xs surface-card"
                 style={{
                   borderColor: 'var(--color-border-subtle)',
+                  zIndex: 'var(--z-dropdown, 60)',
                 }}
               >
                 <button
@@ -672,10 +674,11 @@ function App() {
               </button>
               {userMenuOpen && (
                 <div
-                  className="absolute right-0 mt-1.5 w-48 py-2 rounded-xl border shadow-lg z-50 text-xs"
+                  className="absolute right-0 mt-1.5 w-48 py-2 rounded-xl border shadow-lg text-xs"
                   style={{
                     background: 'var(--color-surface-0)',
                     borderColor: 'var(--color-surface-2)',
+                    zIndex: 'var(--z-dropdown, 60)',
                   }}
                 >
                   <div className="px-3 py-1.5 border-b mb-1 truncate text-[11px]" style={{ color: 'var(--color-ink-secondary)', borderColor: 'var(--color-surface-2)' }}>
@@ -735,7 +738,7 @@ function App() {
       </header>
 
       {/* Mobile nav */}
-      <nav className="md:hidden no-print flex items-center gap-1 px-4 py-2 border-b overflow-x-auto" style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-surface-2)' }}>
+      <nav className="lg:hidden no-print flex items-center gap-1 px-4 py-2 border-b overflow-x-auto" style={{ background: 'var(--color-surface-1)', borderColor: 'var(--color-surface-2)', zIndex: 'var(--z-header, 50)' }}>
         {(['overview', 'explorer', 'insights', 'workflows', 'cases', 'interpreter', 'navigator'] as ViewMode[]).map((v) => (
           <button
             key={v}
@@ -842,7 +845,7 @@ function App() {
               </div>
 
               {/* Right Column: Real Leaflet Map with signature straight-line path vectors */}
-              <div className="lg:col-span-7 h-[360px] sm:h-[420px] lg:h-full min-h-[380px] rounded-xl overflow-hidden border border-[var(--color-surface-2)] shadow-sm relative bg-[var(--color-surface-1)]">
+              <div className="lg:col-span-7 h-[360px] sm:h-[420px] lg:h-full min-h-[380px] rounded-xl overflow-hidden border border-[var(--color-surface-2)] shadow-sm relative bg-[var(--color-surface-1)] map-stacking-context min-w-0 min-h-0">
                 <GapMap
                   centres={filteredCentres}
                   areas={filteredAreas}
@@ -1334,16 +1337,20 @@ function App() {
 
       {/* ===== EXPLORER VIEW ===== */}
       {view === 'explorer' && (
-        <div className="flex flex-col md:flex-row h-[calc(100vh-60px)] md:h-[calc(100vh-68px)]">
+        <div className="flex flex-col md:flex-row h-[calc(100dvh-56px)] md:h-[calc(100dvh-64px)] min-h-0 min-w-0 overflow-hidden">
           {/* Side panel */}
           <div
-            className={`no-print ${showMobileList ? 'fixed inset-0 z-40 pt-16' : 'hidden'} md:relative md:block md:w-[380px] lg:w-[420px] overflow-y-auto border-r flex-shrink-0`}
-            style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-surface-2)' }}
+            className={`no-print ${showMobileList ? 'fixed inset-0 pt-16' : 'hidden'} md:relative md:block md:w-[380px] lg:w-[420px] overflow-y-auto border-r flex-shrink-0 min-h-0 min-w-0`}
+            style={{
+              background: 'var(--color-surface-0)',
+              borderColor: 'var(--color-surface-2)',
+              zIndex: showMobileList ? 'var(--z-panel, 40)' : undefined,
+            }}
           >
             {/* Mobile close */}
             <button
-              className="md:hidden absolute top-4 right-4 p-2 rounded-md z-50"
-              style={{ background: 'var(--color-surface-1)' }}
+              className="md:hidden absolute top-4 right-4 p-2 rounded-md"
+              style={{ background: 'var(--color-surface-1)', zIndex: 'var(--z-panel, 40)' }}
               onClick={() => setShowMobileList(false)}
               aria-label={t('close', lang)}
             >
@@ -1507,7 +1514,7 @@ function App() {
           </div>
 
           {/* Map area */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative min-h-0 min-w-0 overflow-hidden map-stacking-context">
             <GapMap
               centres={filteredCentres}
               areas={filteredAreas}
@@ -1521,36 +1528,40 @@ function App() {
               onAreaClick={setSelectedArea}
               lang={lang}
               threshold={threshold}
+              isDrawerOpen={!!selectedCentre || assistantOpen}
+              isBottomSheetOpen={!!selectedArea && !selectedCentre}
+              hideInnerDrawer={true}
             />
 
-            {/* Mobile toggle */}
-            <button
-              className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-30 px-6 py-3 rounded-full font-medium text-sm glass"
-              style={{ boxShadow: 'var(--shadow-lg)' }}
-              onClick={() => setShowMobileList(!showMobileList)}
-              aria-label={showMobileList ? t('map_view', lang) : t('list_view', lang)}
-            >
-              {showMobileList ? (
-                <><MapTrifold size={18} className="inline mr-2" />{t('map_view', lang)}</>
-              ) : (
-                <><ListIcon size={18} className="inline mr-2" />{t('list_view', lang)}</>
-              )}
-            </button>
-
-            {/* What-if indicator */}
-            {whatIfMode && (
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full glass font-body-sm" style={{ color: 'var(--color-accent)' }}>
-                <Crosshair size={16} className="inline mr-2" />
-                {t('what_if_desc', lang)}
-              </div>
+            {/* Mobile toggle (Suppressed when bottom sheet is active to prevent lower collision) */}
+            {!selectedArea && !selectedCentre && (
+              <button
+                className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 touch-target-44 items-center justify-center px-5 py-2.5 rounded-full font-medium text-sm glass shadow-lg transition-transform focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                style={{
+                  boxShadow: 'var(--shadow-lg)',
+                  zIndex: 'var(--z-map-floating, 30)',
+                }}
+                onClick={() => setShowMobileList(!showMobileList)}
+                aria-label={showMobileList ? t('map_view', lang) : t('list_view', lang)}
+              >
+                {showMobileList ? (
+                  <><MapTrifold size={18} className="inline mr-2" />{t('map_view', lang)}</>
+                ) : (
+                  <><ListIcon size={18} className="inline mr-2" />{t('list_view', lang)}</>
+                )}
+              </button>
             )}
           </div>
 
           {/* Centre detail drawer */}
           {selectedCentre && (
             <div
-              className="fixed inset-y-0 right-0 w-full sm:w-[400px] z-50 overflow-y-auto"
-              style={{ background: 'var(--color-surface-0)', boxShadow: 'var(--shadow-xl)' }}
+              className="fixed inset-y-0 right-0 w-full sm:w-[400px] overflow-y-auto"
+              style={{
+                background: 'var(--color-surface-0)',
+                boxShadow: 'var(--shadow-xl)',
+                zIndex: 'var(--z-drawer, 70)',
+              }}
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-6">
@@ -1659,8 +1670,13 @@ function App() {
           {/* Selected area detail (bottom sheet on mobile) */}
           {selectedArea && !selectedCentre && (
             <div
-              className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-4 md:right-4 md:left-auto md:w-[360px] z-30 rounded-t-2xl md:rounded-xl overflow-hidden"
-              style={{ background: 'var(--color-surface-0)', boxShadow: 'var(--shadow-xl)', border: '1px solid var(--color-surface-2)' }}
+              className="fixed bottom-0 left-0 right-0 md:absolute md:bottom-4 md:right-4 md:left-auto md:w-[360px] rounded-t-2xl md:rounded-xl overflow-hidden shadow-2xl"
+              style={{
+                background: 'var(--color-surface-0)',
+                boxShadow: 'var(--shadow-xl)',
+                border: '1px solid var(--color-surface-2)',
+                zIndex: 'var(--z-drawer, 70)',
+              }}
             >
               <div className="p-4">
                 <div className="flex items-start justify-between mb-3">

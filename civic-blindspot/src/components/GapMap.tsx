@@ -3,7 +3,8 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
   Compass, ArrowsCounterClockwise, MagnifyingGlass,
-  ArrowSquareOut, Phone, X, Warning, MapTrifold, List as ListIcon
+  ArrowSquareOut, Phone, X, Warning, MapTrifold, List as ListIcon,
+  Plus, Minus
 } from '@phosphor-icons/react';
 import type { Centre, AreaWithGap, Language } from '../types';
 import { getGoogleMapsUrl, getPhoneUrl } from '../utils/gapAnalysis';
@@ -28,6 +29,9 @@ export interface GapMapProps {
   lang?: Language;
   dark?: boolean;
   showPaths?: boolean;
+  isDrawerOpen?: boolean;
+  isBottomSheetOpen?: boolean;
+  hideInnerDrawer?: boolean;
 }
 
 const KARNATAKA_CENTER: [number, number] = [15.1, 75.8];
@@ -53,6 +57,9 @@ export const GapMap: React.FC<GapMapProps> = ({
   lang = 'en',
   dark = false,
   showPaths = true,
+  isDrawerOpen = false,
+  isBottomSheetOpen = false,
+  hideInnerDrawer = false,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -102,7 +109,7 @@ export const GapMap: React.FC<GapMapProps> = ({
     loadBoundaries();
   }, [loadBoundaries]);
 
-  // 2. Initialize Leaflet Map (strictly NO tileLayer — 100% offline blank map)
+  // 2. Initialize Leaflet Map (strictly NO tileLayer — 100% offline blank map with cooperative gestures)
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapRef.current) return;
@@ -114,10 +121,17 @@ export const GapMap: React.FC<GapMapProps> = ({
       maxZoom: 12,
       zoomControl: false,
       attributionControl: false,
+      scrollWheelZoom: false, // Cooperative scrolling: scroll wheel active only on focus
+      touchZoom: true,
+      dragging: true,
     });
 
-    L.control.zoom({ position: 'topleft' }).addTo(map);
-    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    map.on('focus', () => {
+      map.scrollWheelZoom.enable();
+    });
+    map.on('blur', () => {
+      map.scrollWheelZoom.disable();
+    });
 
     // Click handler for What-If simulator
     map.on('click', (e: L.LeafletMouseEvent) => {
@@ -138,6 +152,28 @@ export const GapMap: React.FC<GapMapProps> = ({
     };
   }, [onMapClick]);
 
+  // Sizing: ResizeObserver to trigger invalidateSize whenever container dimensions change
+  useEffect(() => {
+    if (!mapContainerRef.current || !mapRef.current) return;
+    const ro = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize({ pan: false });
+      }
+    });
+    ro.observe(mapContainerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // Invalidate size when drawer or sheet opens/closes
+  useEffect(() => {
+    if (mapRef.current) {
+      const timer = setTimeout(() => {
+        mapRef.current?.invalidateSize({ pan: false });
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isDrawerOpen, isBottomSheetOpen, dark, showListView]);
+
   // 3. Render Karnataka District Boundaries GeoJSON
   useEffect(() => {
     const map = mapRef.current;
@@ -146,9 +182,6 @@ export const GapMap: React.FC<GapMapProps> = ({
     if (geoJsonLayerRef.current) {
       map.removeLayer(geoJsonLayerRef.current);
       geoJsonLayerRef.current = null;
-    }
-    if (districtLabelsLayerRef.current) {
-      districtLabelsLayerRef.current.clearLayers();
     }
 
     if (!districtsGeoJson) return;
@@ -163,9 +196,7 @@ export const GapMap: React.FC<GapMapProps> = ({
         fillColor: fillColor,
         fillOpacity: 0.6,
       }),
-      onEachFeature: (feature, layer) => {
-        const districtName = feature.properties?.NAME_2 || feature.properties?.district || '';
-        
+      onEachFeature: (_feature, layer) => {
         layer.on({
           mouseover: (e) => {
             const target = e.target;
@@ -179,43 +210,101 @@ export const GapMap: React.FC<GapMapProps> = ({
             geoLayer.resetStyle(e.target);
           },
         });
-
-        // Add lightweight text label at district centroid if valid
-        if (districtName && districtLabelsLayerRef.current && (layer as any).getBounds) {
-          const center = (layer as any).getBounds().getCenter();
-          const labelHtml = `
-            <div style="
-              font-family: var(--font-sans);
-              font-size: 10px;
-              font-weight: 600;
-              text-transform: uppercase;
-              letter-spacing: 0.04em;
-              color: ${dark ? '#94A3B8' : '#475569'};
-              background: ${dark ? 'rgba(11, 13, 17, 0.7)' : 'rgba(255, 255, 255, 0.7)'};
-              padding: 1px 4px;
-              border-radius: 3px;
-              white-space: nowrap;
-              pointer-events: none;
-              text-align: center;
-            ">
-              ${districtName}
-            </div>
-          `;
-          const labelIcon = L.divIcon({
-            html: labelHtml,
-            className: 'district-label-marker',
-            iconSize: [60, 16],
-            iconAnchor: [30, 8],
-          });
-          L.marker(center, { icon: labelIcon, interactive: false }).addTo(districtLabelsLayerRef.current);
-        }
       },
     }).addTo(map);
 
     geoJsonLayerRef.current = geoLayer;
   }, [districtsGeoJson, dark]);
 
-  // 4. Render Straight-line Path Vectors (Underserved centroids to nearest centre)
+  // 4. Declutter and update district labels based on zoom level and pin collision avoidance
+  const updateDistrictLabels = useCallback(() => {
+    const map = mapRef.current;
+    if (!map || !districtLabelsLayerRef.current || !districtsGeoJson) return;
+
+    districtLabelsLayerRef.current.clearLayers();
+
+    // Show labels only when zoomed in to level 8 or higher
+    if (map.getZoom() < 8) return;
+
+    // Get projected pixel coordinates of all legal aid pins
+    const pinPoints = centres.map((c) => map.latLngToContainerPoint([c.lat, c.lng]));
+
+    districtsGeoJson.features?.forEach((feature: any) => {
+      const districtName = feature.properties?.NAME_2 || feature.properties?.district || '';
+      if (!districtName) return;
+
+      const coords = feature.geometry?.coordinates;
+      if (!coords) return;
+
+      let sumLat = 0;
+      let sumLng = 0;
+      let count = 0;
+      const extractPoints = (pts: any) => {
+        if (typeof pts[0] === 'number') {
+          sumLng += pts[0];
+          sumLat += pts[1];
+          count++;
+        } else if (Array.isArray(pts)) {
+          pts.forEach(extractPoints);
+        }
+      };
+      extractPoints(coords);
+      if (count === 0) return;
+
+      const centerLat = sumLat / count;
+      const centerLng = sumLng / count;
+      const centerPt = map.latLngToContainerPoint([centerLat, centerLng]);
+
+      // Skip label if an office pin is within 34px to prevent overlapping
+      const collidesWithPin = pinPoints.some((p) => {
+        const dx = p.x - centerPt.x;
+        const dy = p.y - centerPt.y;
+        return Math.sqrt(dx * dx + dy * dy) < 34;
+      });
+
+      if (collidesWithPin) return;
+
+      const labelHtml = `
+        <div style="
+          font-family: var(--font-sans);
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: ${dark ? '#94A3B8' : '#475569'};
+          background: ${dark ? 'rgba(11, 13, 17, 0.75)' : 'rgba(255, 255, 255, 0.75)'};
+          padding: 1px 4px;
+          border-radius: 3px;
+          white-space: nowrap;
+          pointer-events: none;
+          text-align: center;
+        ">
+          ${districtName}
+        </div>
+      `;
+      const labelIcon = L.divIcon({
+        html: labelHtml,
+        className: 'district-label-marker',
+        iconSize: [60, 16],
+        iconAnchor: [30, 8],
+      });
+      L.marker([centerLat, centerLng], { icon: labelIcon, interactive: false }).addTo(districtLabelsLayerRef.current!);
+    });
+  }, [districtsGeoJson, centres, dark]);
+
+  // Hook label updates to zoom and move events
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    updateDistrictLabels();
+    map.on('zoomend moveend', updateDistrictLabels);
+    return () => {
+      map.off('zoomend moveend', updateDistrictLabels);
+    };
+  }, [updateDistrictLabels]);
+
+  // 5. Render Straight-line Path Vectors (Underserved centroids to nearest centre)
   useEffect(() => {
     if (!pathsLayerRef.current) return;
     pathsLayerRef.current.clearLayers();
@@ -260,7 +349,7 @@ export const GapMap: React.FC<GapMapProps> = ({
     });
   }, [effectiveAreas, centres, threshold, hoveredArea, selectedArea, dark, showPaths, handleHoverArea, handleSelectArea]);
 
-  // 5. Render Legal Aid Offices (Centres) Pins
+  // 6. Render Legal Aid Offices (Centres) Pins
   useEffect(() => {
     if (!markersLayerRef.current) return;
     markersLayerRef.current.clearLayers();
@@ -318,7 +407,7 @@ export const GapMap: React.FC<GapMapProps> = ({
     });
   }, [centres, selectedCentre, handleSelectCentre, dark, lang]);
 
-  // 6. What-If Simulator Placement Marker & 25km Radius
+  // 7. What-If Simulator Placement Marker & 25km Radius
   useEffect(() => {
     if (!whatIfLayerRef.current) return;
     whatIfLayerRef.current.clearLayers();
@@ -382,70 +471,132 @@ export const GapMap: React.FC<GapMapProps> = ({
     );
   }, [centres, searchQuery]);
 
+  const showFloatingCentreCard = selectedCentre && !isDrawerOpen && !hideInnerDrawer;
+
   return (
     <div
-      className="relative w-full h-full min-h-[500px] flex flex-col rounded-2xl overflow-hidden border"
+      className="map-stacking-context relative w-full h-full min-h-0 min-w-0 flex flex-col rounded-2xl overflow-hidden border"
       style={{
         background: dark ? 'var(--color-surface-0)' : 'var(--color-surface-1)',
         borderColor: 'var(--color-border-subtle)',
       }}
     >
-      {/* Top Map Toolbar: Orientation, Mode toggle, Reset View */}
-      <div className="absolute top-3 right-3 z-[400] flex items-center gap-2">
-        <button
-          onClick={handleResetView}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm border transition-colors surface-card hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
-          title="Reset map view to Karnataka default bounds"
+      {/* Top-Right Unified Map Toolbar: Zoom, Reset, Compass, List View */}
+      <div
+        className="map-control-toolbar absolute top-3 transition-all duration-300 flex items-center gap-2"
+        style={{
+          right: isDrawerOpen ? 'calc(min(100vw, 416px) + 12px)' : '12px',
+          zIndex: 'var(--z-map-controls, 20)',
+        }}
+      >
+        {/* Zoom In/Out stack */}
+        <div
+          className="flex items-center rounded-xl border shadow-sm surface-card overflow-hidden"
           style={{ borderColor: 'var(--color-border-strong)' }}
         >
-          <ArrowsCounterClockwise size={14} weight="bold" />
-          <span>Reset View</span>
+          <button
+            onClick={() => mapRef.current?.zoomIn()}
+            className="touch-target-44 w-11 h-11 flex items-center justify-center hover:bg-[var(--color-surface-2)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            title="Zoom in"
+            aria-label="Zoom in"
+          >
+            <Plus size={16} weight="bold" />
+          </button>
+          <div className="w-[1px] h-5 bg-[var(--color-border-subtle)]" />
+          <button
+            onClick={() => mapRef.current?.zoomOut()}
+            className="touch-target-44 w-11 h-11 flex items-center justify-center hover:bg-[var(--color-surface-2)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+            title="Zoom out"
+            aria-label="Zoom out"
+          >
+            <Minus size={16} weight="bold" />
+          </button>
+        </div>
+
+        {/* Reset View */}
+        <button
+          onClick={handleResetView}
+          className="touch-target-44 px-3 rounded-xl text-xs font-semibold shadow-sm border transition-colors surface-card hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] flex items-center gap-1.5"
+          title="Reset map view to Karnataka default bounds"
+          aria-label="Reset map view to Karnataka default bounds"
+          style={{ borderColor: 'var(--color-border-strong)' }}
+        >
+          <ArrowsCounterClockwise size={16} weight="bold" />
+          <span className="hidden sm:inline">Reset</span>
         </button>
 
         {/* North Compass Indicator */}
         <div
-          className="flex items-center justify-center w-8 h-8 rounded-lg border shadow-sm surface-card"
+          className="touch-target-44 w-11 h-11 rounded-xl border shadow-sm surface-card flex items-center justify-center"
           title="North orientation indicator"
+          aria-label="North orientation indicator"
           style={{ borderColor: 'var(--color-border-strong)' }}
         >
-          <Compass size={18} weight="fill" style={{ color: 'var(--color-accent)' }} />
+          <Compass size={20} weight="fill" style={{ color: 'var(--color-accent)' }} />
         </div>
 
         {/* Toggle List View */}
         <button
           onClick={() => setShowListView(!showListView)}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold shadow-sm border transition-colors surface-card hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+          className="touch-target-44 px-3 rounded-xl text-xs font-semibold shadow-sm border transition-colors surface-card hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] flex items-center gap-1.5"
           title={showListView ? 'Switch to Map view' : 'Switch to List view'}
+          aria-label={showListView ? 'Switch to Map view' : 'Switch to List view'}
           style={{ borderColor: 'var(--color-border-strong)' }}
         >
-          {showListView ? <MapTrifold size={14} weight="bold" /> : <ListIcon size={14} weight="bold" />}
-          <span>{showListView ? 'Show Map' : 'List View'}</span>
+          {showListView ? <MapTrifold size={16} weight="bold" /> : <ListIcon size={16} weight="bold" />}
+          <span className="hidden sm:inline">{showListView ? 'Map' : 'List'}</span>
         </button>
       </div>
 
       {/* Main Map Canvas (Offline Blank Map) */}
       <div
         ref={mapContainerRef}
-        className={`w-full h-full min-h-[500px] ${showListView ? 'hidden' : 'block'}`}
+        className={`w-full h-full min-h-0 min-w-0 ${showListView ? 'hidden' : 'block'}`}
         style={{
           background: dark ? '#0B0D11' : '#F8F9FA',
         }}
       />
 
-      {/* Warning if GeoJSON load fails */}
-      {loadError && (
-        <div className="absolute top-14 left-4 z-[400] max-w-sm px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-center gap-2">
-          <Warning size={16} />
-          <span>{loadError}</span>
+      {/* Top-Left What-If Placement Indicator (Non-overlapping with top toolbar) */}
+      {whatIfMode && !showListView && (
+        <div
+          className="absolute top-16 left-3 max-w-[280px] sm:max-w-xs px-3.5 py-2 rounded-xl border shadow-md status-badge-warning text-xs font-medium flex items-center gap-2 pointer-events-none"
+          style={{ zIndex: 'var(--z-map-controls, 20)' }}
+        >
+          <span className="truncate">Click map to simulate facility (25km coverage radius)</span>
         </div>
       )}
 
-      {/* What-If Mode Banner */}
-      {whatIfMode && !showListView && (
+      {/* Bottom Scale Indicator (Clear of bottom sheet) */}
+      {!showListView && (
         <div
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[400] px-4 py-2 rounded-xl border shadow-lg status-badge-warning text-xs font-medium flex items-center gap-2"
+          className="absolute left-3 transition-all duration-300 pointer-events-none"
+          style={{
+            bottom: isBottomSheetOpen ? 'calc(min(65dvh, 320px) + 24px)' : '14px',
+            zIndex: 'var(--z-map-controls, 20)',
+          }}
         >
-          <span>Click anywhere in Karnataka on the blank map to place a simulated legal aid centre (25km coverage radius).</span>
+          <div
+            className="px-2.5 py-1.5 rounded-lg border text-[11px] font-mono shadow-xs surface-card backdrop-blur-md flex items-center gap-2"
+            style={{
+              borderColor: 'var(--color-border-subtle)',
+              color: 'var(--color-ink-secondary)',
+            }}
+          >
+            <span className="inline-block w-10 border-b-2 border-[var(--color-accent)] pb-0.5 font-bold">50 km</span>
+            <span className="text-[10px] uppercase tracking-wider font-semibold">Scale</span>
+          </div>
+        </div>
+      )}
+
+      {/* Warning if GeoJSON load fails */}
+      {loadError && (
+        <div
+          className="absolute top-16 left-3 max-w-sm px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs flex items-center gap-2"
+          style={{ zIndex: 'var(--z-map-floating, 30)' }}
+        >
+          <Warning size={16} />
+          <span>{loadError}</span>
         </div>
       )}
 
@@ -522,11 +673,14 @@ export const GapMap: React.FC<GapMapProps> = ({
         </div>
       )}
 
-      {/* Selected Centre Detail Drawer */}
-      {selectedCentre && (
+      {/* Selected Centre Compact Drawer (Only rendered when external full drawer is not controlling it) */}
+      {showFloatingCentreCard && (
         <div
-          className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 z-[500] p-5 rounded-2xl border shadow-xl surface-card"
-          style={{ borderColor: 'var(--color-border-strong)' }}
+          className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:w-96 p-5 rounded-2xl border shadow-xl surface-card"
+          style={{
+            borderColor: 'var(--color-border-strong)',
+            zIndex: 'var(--z-map-floating, 30)',
+          }}
         >
           <div className="flex items-start justify-between gap-2">
             <div>
@@ -542,8 +696,9 @@ export const GapMap: React.FC<GapMapProps> = ({
             </div>
             <button
               onClick={() => handleSelectCentre(null)}
-              className="p-1 rounded-lg hover:bg-[var(--color-surface-2)] transition-colors"
+              className="touch-target-44 w-8 h-8 rounded-lg hover:bg-[var(--color-surface-2)] transition-colors flex items-center justify-center"
               style={{ color: 'var(--color-ink-secondary)' }}
+              aria-label="Close detail card"
             >
               <X size={16} />
             </button>

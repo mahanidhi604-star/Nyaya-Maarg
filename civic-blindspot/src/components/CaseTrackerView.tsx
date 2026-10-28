@@ -415,7 +415,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
         {/* Modal: Add Event */}
         {showAddEventModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" style={{ zIndex: 'var(--z-modal, 80)' }}>
             <div className="w-full max-w-md p-6 rounded-2xl surface-card shadow-xl" style={{ borderColor: 'var(--color-border-strong)' }}>
               <h3 className="text-lg font-bold mb-4" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
                 Add Timeline Event / Deadline
@@ -701,7 +701,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
       {/* Modal: Create Case */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" style={{ zIndex: 'var(--z-modal, 80)' }}>
           <div className="w-full max-w-lg p-6 rounded-2xl surface-card shadow-2xl max-h-[90vh] overflow-y-auto" style={{ borderColor: 'var(--color-border-strong)' }}>
             <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
               Create Confidential Case File
@@ -827,7 +827,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
 
       {/* Modal: Privacy Notice */}
       {showPrivacyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+        <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs" style={{ zIndex: 'var(--z-modal, 80)' }}>
           <div className="w-full max-w-md p-6 rounded-2xl surface-card shadow-xl" style={{ borderColor: 'var(--color-border-strong)' }}>
             <h3 className="text-lg font-bold mb-3" style={{ fontFamily: 'var(--font-serif)', color: 'var(--color-ink-primary)' }}>
               Data Storage & Privacy Policy

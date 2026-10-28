@@ -96,3 +96,36 @@ gap-4: #A31D1D  (Critical isolated gap, > 75 km)
 - Path lines draw in by rank with staggered opacity.
 - Interactive press feedback (`active:scale-[0.98]`).
 - Respects `prefers-reduced-motion` with instantaneous fallback.
+
+---
+
+## 6. Layout, Stacking Context & Responsive Geometry
+
+### Unified Stacking Context Z-Index Scale
+To prevent third-party map internal panes (e.g. Leaflet's default z-index values of 400–600) from breaking through global navigation, drawers, menus, and modals, the map wrapper is strictly isolated. All application layers follow a single tokenized z-index scale:
+
+| Token | Value | Target UI Elements |
+|---|---|---|
+| `--z-map-base` | `0` | Leaflet tile panes, SVG paths, background canvas |
+| `--z-map-overlay` | `10` | District boundary GeoJSON, hover vector lines |
+| `--z-map-controls` | `20` | Map toolbar (Zoom, Reset, Compass), Scale indicator |
+| `--z-map-floating` | `30` | Floating List/Map mobile toggle button |
+| `--z-panel` | `40` | Side explorer list panel, filters, mobile side navigation |
+| `--z-header` | `50` | Sticky top app header and global navigation tabs |
+| `--z-dropdown` | `60` | User account menu, "My legal help" dropdown menu |
+| `--z-drawer` | `70` | Centre detail drawer, AI assistant drawer, mobile bottom sheet |
+| `--z-modal` | `80` | Modals, case creation forms, full-screen dialogs |
+| `--z-toast` | `90` | Floating notifications, undo snackbars |
+
+### Isolation & Sizing Rules
+1. **Container Isolation**: Every map container is wrapped in `.map-stacking-context` with `position: relative; isolation: isolate; overflow: hidden;`. This creates a local stacking context and guarantees no map elements or popups escape into the root page.
+2. **Layout Cell Sizing**: Layout parents use flex and grid sizing with explicit `min-w-0` and `min-h-0` constraints. Mobile viewport heights use dynamic viewport units (`100dvh` and `50dvh`) rather than `vh` to prevent mobile address bar jumping.
+3. **Automatic Resize Invalidation**: A `ResizeObserver` listens to map container dimensions, drawer state transitions, and theme swaps, calling `map.invalidateSize({ pan: false })` to preserve user panning coordinates.
+4. **Cooperative Gestures**: Map scroll zoom is disabled by default (`scrollWheelZoom: false`), requiring explicit user focus/click to prevent page scroll hijacking.
+
+### Corner Control Placement & Collision Avoidance
+- **Top-Right Toolbar**: Zoom In, Zoom Out, Reset View, North Compass, and List/Map toggle are unified into a single vertical stack with consistent 4px padding and 44x44px minimum touch targets (`.touch-target-44`). When a detail or assistant drawer slides out, the toolbar dynamically shifts left (`right: calc(min(100vw, 416px) + 12px)`), guaranteeing zero occlusion.
+- **Top-Left Status**: What-If simulator placement banner is anchored at `top-16 left-3` with vertical clearance preventing any horizontal collision with the top-right toolbar on viewports down to 320px.
+- **Bottom-Left Scale**: Scale indicator is positioned at `bottom: calc(min(65dvh, 320px) + 24px)` whenever a bottom sheet or area card is open, maintaining at least 24px vertical separation above the sheet.
+- **District Label Collision Filter**: Karnataka district centroid text labels only render when zoom level $\ge 8$. Centroids within 34px Euclidean screen distance of legal office marker pins are automatically culled to avoid marker obscuration.
+

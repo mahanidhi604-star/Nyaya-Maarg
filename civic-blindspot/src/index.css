@@ -73,6 +73,18 @@
   --radius-xl: 16px;
 
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Unified Stacking Context Z-Index Scale */
+  --z-map-base: 0;
+  --z-map-overlay: 10;
+  --z-map-controls: 20;
+  --z-map-floating: 30;
+  --z-panel: 40;
+  --z-header: 50;
+  --z-dropdown: 60;
+  --z-drawer: 70;
+  --z-modal: 80;
+  --z-toast: 90;
 }
 
 /* ===== DARK MODE TOKENS ===== */
@@ -156,6 +168,45 @@ body {
   background-color: var(--color-surface-0);
   color: var(--color-ink-primary);
   line-height: 1.55;
+}
+
+/* ===== STACKING CONTEXT & MAP ISOLATION ===== */
+.map-stacking-context {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: hidden !important;
+}
+
+.map-stacking-context .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  outline: none;
+}
+
+.map-stacking-context .leaflet-pane {
+  z-index: 1 !important;
+}
+.map-stacking-context .leaflet-overlay-pane {
+  z-index: 2 !important;
+}
+.map-stacking-context .leaflet-marker-pane {
+  z-index: 3 !important;
+}
+.map-stacking-context .leaflet-tooltip-pane {
+  z-index: 4 !important;
+}
+.map-stacking-context .leaflet-popup-pane {
+  z-index: 5 !important;
+}
+.map-stacking-context .leaflet-control {
+  z-index: 10 !important;
+}
+
+/* Touch Targets: Minimum 44x44px for accessibility */
+.touch-target-44 {
+  min-width: 44px;
+  min-height: 44px;
 }
 
 /* ===== TYPOGRAPHY CLASSES ===== */

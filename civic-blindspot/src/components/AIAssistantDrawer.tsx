@@ -259,11 +259,12 @@ export default function AIAssistantDrawer({
 
   return (
     <div
-      className="fixed inset-y-0 right-0 w-full sm:w-[420px] md:w-[450px] z-50 flex flex-col border-l transition-transform duration-300"
+      className="fixed inset-y-0 right-0 w-full sm:w-[420px] md:w-[450px] flex flex-col border-l transition-transform duration-300"
       style={{
         background: 'var(--color-surface-0)',
         borderColor: 'var(--color-surface-2)',
         boxShadow: 'var(--shadow-xl)',
+        zIndex: 'var(--z-drawer, 70)',
       }}
       role="dialog"
       aria-labelledby="assistant-title"
