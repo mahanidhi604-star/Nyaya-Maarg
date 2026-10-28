@@ -1,6 +1,6 @@
-# CivicBlindspot — Legal Aid Access & Citizen Case Workspace (Karnataka)
+# Nyaya-Maarg - Legal Aid Access and Citizen Case Workspace (Karnataka)
 
-> A civic-tech data dashboard and intelligence platform that maps disparities in access to free legal services across Karnataka's 176+ taluks, provides guided legal workflows, confidential case tracking with Row-Level Security, and a plain-language legal document interpreter.
+> A civic-tech data publication and intelligence platform that maps disparities in access to free legal services across Karnataka's 176+ taluks, provides guided legal workflows, confidential case tracking with Row-Level Security, and a plain-language legal document interpreter.
 
 ---
 
