@@ -129,3 +129,58 @@ To prevent third-party map internal panes (e.g. Leaflet's default z-index values
 - **Bottom-Left Scale**: Scale indicator is positioned at `bottom: calc(min(65dvh, 320px) + 24px)` whenever a bottom sheet or area card is open, maintaining at least 24px vertical separation above the sheet.
 - **District Label Collision Filter**: Karnataka district centroid text labels only render when zoom level $\ge 8$. Centroids within 34px Euclidean screen distance of legal office marker pins are automatically culled to avoid marker obscuration.
 
+---
+
+## 7. Camera Architecture & Gestures (Parts 1 & 3)
+
+### Singleton Map Lifecycle & Event Decoupling
+To eliminate map-flicker and unwanted camera jumps on cursor hover, the Leaflet map instance is instantiated strictly once inside a React `useEffect([], ...)` with a persistent `mapRef.current`.
+1. **Never Remount on Hover**: Pointer events (`mouseover`, `mousemove`, `mouseleave`) over district polygons, office markers, side tabs, or toolbar buttons perform cheap, in-place Leaflet DOM style mutations (`layer.setStyle({ fillOpacity, weight })`) without destroying layers or triggering React re-renders.
+2. **Stable Callbacks**: Handlers are referenced via a stable `callbacksRef.current` object, guaranteeing event listeners never retain stale props or cause tear-down.
+
+### Unified `CameraController` & Strict Reason Whitelist
+All programmatic camera adjustments route through a single module `cameraController.ts`. Arbitrary map pans or uncoordinated `flyTo` calls are strictly banned. Only whitelisted reasons are honored:
+
+| Reason Whitelist | Trigger Event | Animation / Easing | User Interrupt Guard |
+|---|---|---|---|
+| `'initial-fit'` | Initial map load | Instant (`animate: false`) | Ignored if already fit |
+| `'reset-view'` | Reset view button / Home key | Smooth fly (`duration: 0.8s`) | Always permitted |
+| `'select-office'` | Office clicked in list or on map | Smooth pan/zoom with drawer padding offset | Suppressed if user dragging |
+| `'select-district'` | District clicked in list or on map | Fit bounds with edge padding | Suppressed if user dragging |
+| `'filter-district'` | District dropdown selector | Fit district polygon | Suppressed if user dragging |
+| `'tour'` | Guided tour step transitions (1-6) | Data-driven focus point | Suppressed if user dragging |
+| `'location'` | Offline suggestion / Geocode submit | Fly to user coordinate (`zoom: 11`) | Suppressed if user dragging |
+| `'user-gesture'` | Direct pan, pinch, wheel zoom | Native Leaflet gesture physics | Disables programmatic overrides |
+
+- **User Gesture Protection**: If the user is actively panning or pinching (`isUserInteracting === true`), programmatic camera calls outside explicit user actions (`reset-view`) are safely discarded.
+- **Accessibility & Reduced Motion**: Automatically checks `window.matchMedia('(prefers-reduced-motion: reduce)')`. When set, animations (`flyTo`, smooth zoom) collapse to immediate bounds updates (`animate: false`).
+
+---
+
+## 8. Explorer Tabs, Guided Tour & Location Architecture (Parts 2, 4 & 5)
+
+### WAI-ARIA Explorer Tabs Pattern (Part 2)
+The side explorer uses a standards-compliant WAI-ARIA tab pattern (`role="tablist"`, `role="tab"`, `role="tabpanel"`):
+- **Tabs**: `Offices` (tab-offices), `Gaps` (tab-gaps), and dynamic `Near you` (tab-near-you).
+- **Keyboard Navigation**: Left/Right Arrow keys move focus with roving `tabIndex` (`0` on active, `-1` on inactive), `Home` jumps to first tab, `End` jumps to last tab.
+- **URL Synchronization**: Active tab synchronizes with `?tab=<id>` without causing route remounts.
+- **Touch Target Integrity**: All office rows and gap items have `>= 44px` touch targets, visible focus rings, and non-color selection indicators (left indicator bar + subtle surface elevation).
+- **Accessible Detail Drawer**: Clicking an office opens `CentreDetailDrawer` (role="dialog") providing full official address, languages, 4 distinct action triggers ("View on map", "Open in Google Maps", "Call", "Report wrong info"), and closes cleanly with `Esc`.
+
+### 6-Stage Data-Driven Guided Tour State Machine (Part 4)
+The guided tour guides users through the structural justice desert across Karnataka in 6 data-driven stages computed dynamically from the live legal aid dataset:
+1. **Stage 1 (The Legal Aid Desert)**: Identifies the single most underserved district in Karnataka (e.g. Bidar) by population and distance deficit.
+2. **Stage 2 (District Disparity)**: Switches automatically to the Gaps tab, highlighting the district with its approximate distance vector line to the nearest DLSA.
+3. **Stage 3 (25 km Reach Standard)**: Activates coverage reach buffers and highlights areas falling outside the standard reach radius.
+4. **Stage 4 (Simulated Facility)**: Engages the What-If clinic placement tool at the underserved centroid, visualizing newly closed service gaps.
+5. **Stage 5 (Localised Access / Near You)**: Simulates a user location lookup, placing the user pin and displaying nearby legal aid options.
+6. **Stage 6 (Public Legal Aid Navigator)**: Summarizes findings and provides a direct path to the procedural AI Assistant and Legal Navigator.
+- **State Restoration**: On exit (`Escape`, Close, or Skip), the application restores the user's pre-tour state (tab, selected area, filters, simulation state) from a clean memory snapshot.
+
+### Location Search & "Near You" Privacy Standard (Part 5)
+- **Local-First Autocomplete**: Performs instantaneous offline substring matching across 31 Karnataka districts, 176 taluks, and bundled pincodes without external API calls or network egress.
+- **Submit-Only Online Geocoding**: Online geocoding via OpenStreetMap Nominatim/Photon occurs strictly on explicit Enter or Find button click, restricted to Karnataka bounding box with a 4-second timeout.
+- **Point-in-Polygon Detection**: Uses an offline ray-casting point-in-polygon algorithm (`findDistrictForLatLng`) against local Karnataka GeoJSON to identify the user's administrative district.
+- **Zero Distance / Privacy Guard**: To protect user privacy and avoid misleading travel calculations, the application strictly does NOT calculate, display, or sort by distance or travel time from the user's location. Sorting is purely alphabetical. Directions are delegated via external Google Maps intent links (`google.com/maps/dir/?api=1&destination=...`).
+- **Neighbouring District Fallback**: When no legal aid office exists within the user's district, the system consults an exact topological adjacency map of Karnataka's 31 districts to suggest legal offices in adjacent neighbouring districts.
+

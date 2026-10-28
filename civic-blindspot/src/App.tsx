@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import {
-  MapTrifold, List as ListIcon, Funnel, X, Sun, Moon,
+  MapTrifold, List as ListIcon, X, Sun, Moon,
   Phone, ArrowSquareOut, CaretRight, CaretLeft, CaretDown,
   Crosshair, Printer, Info, Warning, ArrowsCounterClockwise,
   CheckCircle, Sparkle, User, SignOut, LockKey
@@ -19,6 +19,11 @@ import AIAssistantDrawer from './components/AIAssistantDrawer';
 import WorkflowsView from './components/WorkflowsView';
 import CaseTrackerView from './components/CaseTrackerView';
 import CaseInterpreterView from './components/CaseInterpreterView';
+import { LocationSearchBox } from './components/LocationSearchBox';
+import { ExplorerTabs } from './components/ExplorerTabs';
+import type { ExplorerTab } from './components/ExplorerTabs';
+import { GuidedTourBanner } from './components/GuidedTourBanner';
+import { CentreDetailDrawer } from './components/CentreDetailDrawer';
 import { fetchUserCases } from './lib/caseService';
 import { useAuth } from './context/AuthContext';
 import type { ViewMode, Language, Centre, AreaWithGap, NavigatorAnswers, UserCase } from './types';
@@ -102,12 +107,79 @@ function App() {
     income_category: null, language_pref: null,
   });
 
-  // Keep URL updated with state changes
+  const [activeTab, setActiveTab] = useState<ExplorerTab>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'gaps' || tab === 'near-you') return tab;
+    return 'offices';
+  });
+
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+    label: string;
+    district: string;
+  } | null>(null);
+
+  const [districtsGeoJson, setDistrictsGeoJson] = useState<any | null>(null);
+  useEffect(() => {
+    fetch('/data/karnataka_districts.geojson')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && setDistrictsGeoJson(d))
+      .catch(() => {});
+  }, []);
+
+  const [tourStep, setTourStep] = useState<number | null>(null);
+  const preTourSnapshotRef = useRef<{
+    activeTab: ExplorerTab;
+    selectedDistrict: string;
+    selectedCentre: Centre | null;
+    threshold: number;
+    whatIfMode: boolean;
+    whatIfPos: { lat: number; lng: number } | null;
+    userLocation: any;
+  } | null>(null);
+
+  const drawerCloseBtnRef = useRef<HTMLButtonElement>(null);
+  const triggerElementRef = useRef<HTMLElement | null>(null);
+
+  // Esc key listener: clears selected centre or area
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (selectedCentre) {
+          setSelectedCentre(null);
+        } else if (selectedArea) {
+          setSelectedArea(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCentre, selectedArea]);
+
+  // Focus management: move focus into drawer on open and return to trigger on close
+  useEffect(() => {
+    if (selectedCentre) {
+      triggerElementRef.current = document.activeElement as HTMLElement;
+      setTimeout(() => {
+        drawerCloseBtnRef.current?.focus();
+      }, 50);
+    } else if (triggerElementRef.current) {
+      triggerElementRef.current.focus();
+      triggerElementRef.current = null;
+    }
+  }, [selectedCentre]);
+
+  // Keep URL updated with state changes including ?tab=
   useEffect(() => {
     const params = new URLSearchParams();
     if (threshold !== 25) params.set('threshold', String(threshold));
     if (selectedDistrict) params.set('district', selectedDistrict);
     if (selectedService) params.set('service', selectedService);
+    if (selectedType) params.set('type', selectedType);
+    if (selectedCentre) params.set('centre', selectedCentre.id);
+    if (activeTab && activeTab !== 'offices') params.set('tab', activeTab);
 
     const queryString = params.toString() ? `?${params.toString()}` : '';
     const pathname = view === 'overview' ? '/' : `/${view}`;
@@ -116,7 +188,7 @@ function App() {
     if (window.location.pathname + window.location.search !== targetUrl) {
       window.history.replaceState({}, '', targetUrl);
     }
-  }, [view, threshold, selectedDistrict, selectedService]);
+  }, [view, threshold, selectedDistrict, selectedService, selectedType, selectedCentre, activeTab]);
 
   // Handle browser back/forward buttons
   useEffect(() => {
@@ -135,11 +207,34 @@ function App() {
       if (params.get('threshold')) setThreshold(Number(params.get('threshold')));
       if (params.get('district') !== null) setSelectedDistrict(params.get('district') || '');
       if (params.get('service') !== null) setSelectedService(params.get('service') || '');
+      if (params.get('type') !== null) setSelectedType(params.get('type') || '');
+      const tabParam = params.get('tab');
+      if (tabParam === 'gaps' || tabParam === 'near-you') {
+        setActiveTab(tabParam);
+      } else {
+        setActiveTab('offices');
+      }
+      if (params.get('centre')) {
+        const found = centres.find((c) => c.id === params.get('centre'));
+        if (found) setSelectedCentre(found);
+      } else {
+        setSelectedCentre(null);
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [centres, isAuthenticated]);
+
+  // Sync initial ?centre from URL when centres load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const centreParam = params.get('centre');
+    if (centreParam && centres.length > 0) {
+      const found = centres.find((c) => c.id === centreParam);
+      if (found) setSelectedCentre(found);
+    }
+  }, [centres]);
 
   // Fetch user cases when user or auth changes
   useEffect(() => {
@@ -237,6 +332,40 @@ function App() {
   const serviceTypes = useMemo(() => getServiceTypes(centres), [centres]);
   const centreTypes = useMemo(() => getCentreTypes(centres), [centres]);
 
+  // Filter item counts for dropdown badges
+  const districtCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    districts.forEach((d) => {
+      counts[d] = centres.filter((c) => c.district.toLowerCase() === d.toLowerCase()).length;
+    });
+    return counts;
+  }, [districts, centres]);
+
+  const typeCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    centreTypes.forEach((t) => {
+      counts[t] = centres.filter((c) => c.type === t).length;
+    });
+    return counts;
+  }, [centreTypes, centres]);
+
+  const serviceCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    serviceTypes.forEach((s) => {
+      counts[s] = centres.filter((c) => c.services.includes(s)).length;
+    });
+    return counts;
+  }, [serviceTypes, centres]);
+
+  const hasActiveFilters = Boolean(selectedDistrict || selectedType || selectedService || threshold !== 25);
+
+  const clearAllFilters = () => {
+    setSelectedDistrict('');
+    setSelectedType('');
+    setSelectedService('');
+    setThreshold(25);
+  };
+
   // Real coverage curve calculation for Overview finding section
   const coverageCurve = useMemo(() => {
     if (areasWithGap.length === 0) return [];
@@ -279,6 +408,65 @@ function App() {
   const handlePrint = useCallback(() => {
     window.print();
   }, []);
+
+  // Top underserved area for tour and spotlighting
+  const topUnderservedArea = useMemo(() => {
+    if (areasWithGap.length === 0) return null;
+    return [...areasWithGap].sort((a, b) => (b.nearest_km ?? 0) - (a.nearest_km ?? 0))[0];
+  }, [areasWithGap]);
+
+  const handleStartTour = useCallback(() => {
+    preTourSnapshotRef.current = {
+      activeTab,
+      selectedDistrict,
+      selectedCentre,
+      threshold,
+      whatIfMode,
+      whatIfPos,
+      userLocation,
+    };
+    setTourStep(1);
+  }, [activeTab, selectedDistrict, selectedCentre, threshold, whatIfMode, whatIfPos, userLocation]);
+
+  const handleExitTour = useCallback(() => {
+    if (preTourSnapshotRef.current) {
+      setActiveTab(preTourSnapshotRef.current.activeTab);
+      setSelectedDistrict(preTourSnapshotRef.current.selectedDistrict);
+      setSelectedCentre(preTourSnapshotRef.current.selectedCentre);
+      setThreshold(preTourSnapshotRef.current.threshold);
+      setWhatIfMode(preTourSnapshotRef.current.whatIfMode);
+      setWhatIfPos(preTourSnapshotRef.current.whatIfPos);
+      setUserLocation(preTourSnapshotRef.current.userLocation);
+      preTourSnapshotRef.current = null;
+    }
+    setTourStep(null);
+  }, []);
+
+  // Guided tour 6-stage data driver
+  useEffect(() => {
+    if (tourStep === null || !topUnderservedArea) return;
+
+    if (tourStep === 1) {
+      setSelectedDistrict(topUnderservedArea.district);
+      setActiveTab('gaps');
+    } else if (tourStep === 2) {
+      setSelectedDistrict(topUnderservedArea.district);
+      setActiveTab('gaps');
+    } else if (tourStep === 3) {
+      setThreshold(25);
+    } else if (tourStep === 4) {
+      setWhatIfMode(true);
+      setWhatIfPos({ lat: topUnderservedArea.centroid_lat, lng: topUnderservedArea.centroid_lng });
+    } else if (tourStep === 5) {
+      setUserLocation({
+        lat: topUnderservedArea.centroid_lat,
+        lng: topUnderservedArea.centroid_lng,
+        label: `${topUnderservedArea.name}, ${topUnderservedArea.district}`,
+        district: topUnderservedArea.district,
+      });
+      setActiveTab('near-you');
+    }
+  }, [tourStep, topUnderservedArea]);
 
   // Navigator logic
   const navigatorQuestions = [
@@ -1358,172 +1546,188 @@ function App() {
             </button>
 
             <div className="p-4 space-y-4">
-              {/* Filters */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <Funnel size={18} style={{ color: 'var(--color-ink-tertiary)' }} />
-                  <span className="font-label" style={{ color: 'var(--color-ink-secondary)' }}>
-                    {lang === 'kn' ? 'ಫಿಲ್ಟರ್‌ಗಳು' : 'Filters'}
-                  </span>
-                </div>
-
-                <select
-                  value={selectedDistrict}
-                  onChange={(e) => setSelectedDistrict(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)', border: '1px solid var(--color-surface-2)', fontFamily: 'var(--font-sans)' }}
-                  aria-label={t('filter_district', lang)}
-                >
-                  <option value="">{t('all_districts', lang)}</option>
-                  {districts.map((d) => <option key={d} value={d}>{d}</option>)}
-                </select>
-
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)', border: '1px solid var(--color-surface-2)', fontFamily: 'var(--font-sans)' }}
-                  aria-label={t('filter_type', lang)}
-                >
-                  <option value="">{t('all_types', lang)}</option>
-                  {centreTypes.map((ct) => <option key={ct} value={ct}>{ct}</option>)}
-                </select>
-
-                <select
-                  value={selectedService}
-                  onChange={(e) => setSelectedService(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)', border: '1px solid var(--color-surface-2)', fontFamily: 'var(--font-sans)' }}
-                  aria-label={t('services', lang)}
-                >
-                  <option value="">{lang === 'kn' ? 'ಎಲ್ಲಾ ಸೇವೆಗಳು' : 'All services'}</option>
-                  {serviceTypes.map((st) => <option key={st} value={st}>{st}</option>)}
-                </select>
-
-                {/* Threshold slider */}
-                <div>
-                  <label className="font-label mb-1 block text-xs" style={{ color: 'var(--color-ink-secondary)' }}>
-                    {t('threshold', lang)}: <span className="font-stat" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-accent)' }}>{threshold} km</span>
-                  </label>
-                  <input
-                    type="range" min={10} max={50} step={5} value={threshold}
-                    onChange={(e) => setThreshold(Number(e.target.value))}
-                    className="w-full"
-                    aria-label={t('threshold', lang)}
-                  />
-                </div>
-              </div>
-
-              {/* What-if toggle */}
-              <button
-                onClick={() => { setWhatIfMode(!whatIfMode); setWhatIfPos(null); }}
-                className="w-full flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-                style={{
-                  background: whatIfMode ? 'var(--color-accent-subtle)' : 'var(--color-surface-1)',
-                  color: whatIfMode ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
-                  border: `1px solid ${whatIfMode ? 'var(--color-accent)' : 'var(--color-surface-2)'}`,
+              {/* Part 5: Your Location Input */}
+              <LocationSearchBox
+                districts={districts}
+                areas={areas}
+                centres={centres}
+                districtsGeoJson={districtsGeoJson}
+                userLocation={userLocation}
+                onLocationSelect={(loc) => {
+                  setUserLocation(loc);
+                  setSelectedDistrict(loc.district);
+                  setActiveTab('near-you');
                 }}
-              >
-                <Crosshair size={18} />
-                {whatIfMode ? t('disable_what_if', lang) : t('enable_what_if', lang)}
-              </button>
+                onLocationClear={() => {
+                  setUserLocation(null);
+                  if (activeTab === 'near-you') setActiveTab('offices');
+                }}
+                lang={lang}
+              />
 
-              {/* What-if result */}
-              {whatIfMode && whatIfResult && (
-                <div className="p-3 rounded-lg text-sm" style={{ background: 'var(--color-accent-subtle)', border: '1px solid var(--color-accent)' }}>
-                  <p className="font-body-sm" style={{ color: 'var(--color-accent)' }}>
-                    {whatIfResult.newlyServed.length > 0
-                      ? t('what_if_result', lang, {
-                          count: whatIfResult.newlyServed.length,
-                          population: formatPopulation(whatIfResult.peopleBenefit),
-                          threshold: threshold,
-                        })
-                      : t('what_if_no_impact', lang)
-                    }
-                  </p>
-                  {whatIfResult.newlyServed.length > 0 && (
-                    <ul className="mt-2 space-y-1">
-                      {whatIfResult.newlyServed.slice(0, 5).map((a) => (
-                        <li key={a.id} className="font-body-sm" style={{ color: 'var(--color-ink-secondary)' }}>
-                          • {lang === 'kn' ? a.name_kn : a.name} ({formatPopulation(a.population)})
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-
-              {/* Briefing export */}
-              <button
-                onClick={handlePrint}
-                className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-secondary)', border: '1px solid var(--color-surface-2)' }}
-              >
-                <Printer size={18} />
-                {t('briefing_export', lang)}
-              </button>
-
-              {/* Top underserved list */}
-              <div>
-                <h3 className="font-h3 mb-3">{t('top_underserved', lang)}</h3>
-                <div className="space-y-2">
-                  {summary.top_underserved
-                    .filter((a) => !selectedDistrict || a.district === selectedDistrict)
-                    .slice(0, 10)
-                    .map((area, i) => (
-                    <button
-                      key={area.id}
-                      className="w-full text-left p-3 rounded-lg transition-all"
-                      style={{
-                        background: (hoveredArea === area.id || selectedArea?.id === area.id) ? 'var(--color-accent-subtle)' : 'var(--color-surface-1)',
-                        border: `1px solid ${selectedArea?.id === area.id ? 'var(--color-accent)' : 'var(--color-surface-2)'}`,
-                      }}
-                      onMouseEnter={() => setHoveredArea(area.id)}
-                      onMouseLeave={() => setHoveredArea(null)}
-                      onClick={() => setSelectedArea(area)}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-stat text-xs" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ink-tertiary)' }}>
-                              #{i + 1}
-                            </span>
-                            <span className="font-body font-medium truncate">
-                              {lang === 'kn' ? area.name_kn : area.name}
-                            </span>
-                            {area.is_sample && <span className="sample-badge" style={{ fontSize: '0.5625rem' }}>{t('sample', lang)}</span>}
-                          </div>
-                          <p className="font-body-sm mt-0.5" style={{ color: 'var(--color-ink-secondary)' }}>
-                            {area.district} · {formatPopulation(area.population)}
-                          </p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <span className="font-stat text-sm block" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-status-danger)' }}>
-                            {formatDistance(area.nearest_km)}
-                          </span>
-                          <span className={`gap-score-${area.gap_score} px-1.5 py-0.5 rounded text-xs font-semibold inline-block mt-1`}>
-                            {lang === 'kn' ? getGapLabelKn(area.gap_score) : getGapLabel(area.gap_score)}
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              {/* Guided View (Tour) Trigger (Part 4) */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => (tourStep === null ? handleStartTour() : handleExitTour())}
+                  className="w-full py-2 px-3 rounded-lg text-xs font-semibold border flex items-center justify-center gap-2 transition-colors surface-card hover:bg-[var(--color-surface-2)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
+                  style={{
+                    borderColor: tourStep !== null ? 'var(--color-accent)' : 'var(--color-border-subtle)',
+                    background: tourStep !== null ? 'var(--color-accent-subtle)' : 'var(--color-surface-1)',
+                    color: tourStep !== null ? 'var(--color-accent)' : 'var(--color-ink-primary)',
+                  }}
+                  aria-pressed={tourStep !== null}
+                >
+                  <span>🧭</span>
+                  <span>{tourStep !== null ? 'Exit Guided Tour' : 'Start Guided Tour (6 Stages)'}</span>
+                </button>
               </div>
+
+              {/* What-if Simulator Toggle */}
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setWhatIfMode(!whatIfMode);
+                    setWhatIfPos(null);
+                  }}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors"
+                  style={{
+                    background: whatIfMode ? 'var(--color-accent-subtle)' : 'var(--color-surface-1)',
+                    color: whatIfMode ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
+                    border: `1px solid ${whatIfMode ? 'var(--color-accent)' : 'var(--color-surface-2)'}`,
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Crosshair size={16} />
+                    <span>{whatIfMode ? 'What-If Mode Active' : 'Simulate Facility'}</span>
+                  </div>
+                  {whatIfPos && (
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setWhatIfPos(null);
+                      }}
+                      className="text-xs underline text-[var(--color-status-danger)] hover:opacity-80"
+                      title="Undo placed pin"
+                    >
+                      Undo Pin
+                    </span>
+                  )}
+                </button>
+
+                {/* What-if result */}
+                {whatIfMode && whatIfResult && (
+                  <div className="p-3 rounded-lg text-xs" style={{ background: 'var(--color-accent-subtle)', border: '1px solid var(--color-accent)' }}>
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-semibold" style={{ color: 'var(--color-accent)' }}>
+                        {whatIfResult.newlyServed.length > 0
+                          ? t('what_if_result', lang, {
+                              count: whatIfResult.newlyServed.length,
+                              population: formatPopulation(whatIfResult.peopleBenefit),
+                              threshold: threshold,
+                            })
+                          : t('what_if_no_impact', lang)}
+                      </p>
+                      {whatIfPos && (
+                        <button
+                          type="button"
+                          onClick={() => setWhatIfPos(null)}
+                          className="text-[11px] px-2 py-0.5 rounded bg-[var(--color-surface-1)] border hover:bg-[var(--color-surface-2)]"
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Briefing export button */}
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors surface-card border"
+                style={{ borderColor: 'var(--color-surface-2)', color: 'var(--color-ink-secondary)' }}
+              >
+                <Printer size={16} />
+                <span>{t('briefing_export', lang)}</span>
+              </button>
+
+              {/* Explorer Tabs (Part 2) */}
+              <ExplorerTabs
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                centres={centres}
+                filteredCentres={filteredCentres}
+                areasWithGap={areasWithGap}
+                districts={districts}
+                districtCounts={districtCounts}
+                serviceTypes={serviceTypes}
+                serviceCounts={serviceCounts}
+                centreTypes={centreTypes}
+                typeCounts={typeCounts}
+                selectedDistrict={selectedDistrict}
+                onSelectDistrict={setSelectedDistrict}
+                selectedType={selectedType}
+                onSelectType={setSelectedType}
+                selectedService={selectedService}
+                onSelectService={setSelectedService}
+                threshold={threshold}
+                onThresholdChange={setThreshold}
+                onClearFilters={clearAllFilters}
+                hasActiveFilters={hasActiveFilters}
+                selectedCentre={selectedCentre}
+                onSelectCentre={setSelectedCentre}
+                hoveredCentreId={hoveredArea}
+                userLocation={userLocation}
+                onClearUserLocation={() => {
+                  setUserLocation(null);
+                  if (activeTab === 'near-you') setActiveTab('offices');
+                }}
+                onNavigateToNavigator={() => navigateToView('navigator')}
+                lang={lang}
+              />
             </div>
           </div>
 
           {/* Map area */}
           <div className="flex-1 relative min-h-0 min-w-0 overflow-hidden map-stacking-context">
+            {/* Guided Tour Banner (Part 4: 6 Data-Driven Stages) */}
+            {tourStep !== null && (
+              <GuidedTourBanner
+                currentStep={tourStep}
+                totalSteps={6}
+                onNext={() => {
+                  if (tourStep < 6) {
+                    setTourStep(tourStep + 1);
+                  } else {
+                    handleExitTour();
+                  }
+                }}
+                onPrev={() => setTourStep(Math.max(1, tourStep - 1))}
+                onSkip={handleExitTour}
+                underservedDistrictName={topUnderservedArea?.district || 'Bidar'}
+                underservedTalukName={topUnderservedArea?.name || 'Aurad'}
+                maxGapKm={topUnderservedArea?.nearest_km || 84}
+                thresholdKm={threshold}
+                newlyCoveredPeople={whatIfResult?.peopleBenefit || 320000}
+                lang={lang}
+              />
+            )}
+
             <GapMap
               centres={filteredCentres}
               areas={filteredAreas}
               selectedArea={selectedArea}
               hoveredArea={hoveredArea}
+              selectedDistrict={selectedDistrict}
+              onSelectDistrict={(d) => setSelectedDistrict(d || '')}
               whatIfMode={whatIfMode}
               whatIfPos={whatIfPos}
               onMapClick={handleMapClick}
-              onCentreClick={setSelectedCentre}
+              selectedCentre={selectedCentre}
+              onSelectCentre={setSelectedCentre}
               onAreaHover={setHoveredArea}
               onAreaClick={setSelectedArea}
               lang={lang}
@@ -1531,9 +1735,11 @@ function App() {
               isDrawerOpen={!!selectedCentre || assistantOpen}
               isBottomSheetOpen={!!selectedArea && !selectedCentre}
               hideInnerDrawer={true}
+              tourStep={tourStep}
+              userLocation={userLocation}
             />
 
-            {/* Mobile toggle (Suppressed when bottom sheet is active to prevent lower collision) */}
+            {/* Mobile toggle */}
             {!selectedArea && !selectedCentre && (
               <button
                 className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 touch-target-44 items-center justify-center px-5 py-2.5 rounded-full font-medium text-sm glass shadow-lg transition-transform focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)]"
@@ -1553,119 +1759,13 @@ function App() {
             )}
           </div>
 
-          {/* Centre detail drawer */}
-          {selectedCentre && (
-            <div
-              className="fixed inset-y-0 right-0 w-full sm:w-[400px] overflow-y-auto"
-              style={{
-                background: 'var(--color-surface-0)',
-                boxShadow: 'var(--shadow-xl)',
-                zIndex: 'var(--z-drawer, 70)',
-              }}
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h2 className="font-h2">{lang === 'kn' ? selectedCentre.name_kn : selectedCentre.name}</h2>
-                      {selectedCentre.is_sample && <span className="sample-badge">{t('sample', lang)}</span>}
-                    </div>
-                    <span className="font-label px-2 py-1 rounded" style={{ background: 'var(--color-accent-subtle)', color: 'var(--color-accent)', fontSize: '0.6875rem' }}>
-                      {selectedCentre.type}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setSelectedCentre(null)}
-                    className="p-2 rounded-md transition-colors"
-                    style={{ background: 'var(--color-surface-1)' }}
-                    aria-label={t('close', lang)}
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-
-                {selectedCentre.is_sample && (
-                  <div className="flex items-start gap-2 p-3 rounded-lg mb-4" style={{ background: 'var(--color-sample-badge-bg)', border: '1px solid var(--color-sample-badge)' }}>
-                    <Warning size={16} style={{ color: 'var(--color-sample-badge)', flexShrink: 0, marginTop: 2 }} />
-                    <p className="font-body-sm" style={{ color: 'var(--color-sample-badge)' }}>
-                      {t('sample_explanation', lang)}
-                    </p>
-                  </div>
-                )}
-
-                {/* Actions */}
-                <div className="flex gap-3 mb-6">
-                  <a
-                    href={getGoogleMapsUrl(selectedCentre.lat, selectedCentre.lng)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-colors"
-                    style={{ background: 'var(--color-accent)', color: '#fff' }}
-                  >
-                    <ArrowSquareOut size={18} />
-                    {t('open_in_maps', lang)}
-                  </a>
-                  {selectedCentre.phone && (
-                    <a
-                      href={getPhoneUrl(selectedCentre.phone)}
-                      className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-colors"
-                      style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)', border: '1px solid var(--color-surface-2)' }}
-                    >
-                      <Phone size={18} />
-                      {t('call', lang)}
-                    </a>
-                  )}
-                </div>
-
-                {/* Details */}
-                <div className="space-y-4">
-                  <div>
-                    <p className="font-label mb-1" style={{ color: 'var(--color-ink-tertiary)' }}>{t('address', lang)}</p>
-                    <p className="font-body" style={{ color: 'var(--color-ink-primary)' }}>{selectedCentre.address}</p>
-                  </div>
-
-                  {selectedCentre.phone && (
-                    <div>
-                      <p className="font-label mb-1" style={{ color: 'var(--color-ink-tertiary)' }}>{t('call', lang)}</p>
-                      <p className="font-body font-stat" style={{ fontFamily: 'var(--font-mono)' }}>{selectedCentre.phone}</p>
-                    </div>
-                  )}
-
-                  <div>
-                    <p className="font-label mb-2" style={{ color: 'var(--color-ink-tertiary)' }}>{t('services', lang)}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCentre.services.map((s) => (
-                        <span key={s} className="px-2 py-1 rounded-md text-xs font-medium" style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-secondary)' }}>
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <p className="font-label mb-2" style={{ color: 'var(--color-ink-tertiary)' }}>{t('languages', lang)}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedCentre.languages.map((l) => (
-                        <span key={l} className="px-2 py-1 rounded-md text-xs font-medium" style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-secondary)' }}>
-                          {l}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-4" style={{ borderTop: '1px solid var(--color-surface-2)' }}>
-                    <p className="font-label mb-1" style={{ color: 'var(--color-ink-tertiary)' }}>{t('source', lang)}</p>
-                    <a href={selectedCentre.source_url} target="_blank" rel="noopener noreferrer" className="font-body-sm" style={{ color: 'var(--color-accent)' }}>
-                      {selectedCentre.source_url}
-                    </a>
-                    <p className="font-body-sm mt-2" style={{ color: 'var(--color-ink-tertiary)' }}>
-                      {t('last_verified', lang)}: {selectedCentre.last_verified}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Part 2: Centre Detail Drawer */}
+          <CentreDetailDrawer
+            centre={selectedCentre}
+            onClose={() => setSelectedCentre(null)}
+            onViewOnMap={(c) => setSelectedCentre(c)}
+            lang={lang}
+          />
 
           {/* Selected area detail (bottom sheet on mobile) */}
           {selectedArea && !selectedCentre && (
