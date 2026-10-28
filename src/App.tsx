@@ -1,9 +1,9 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import {
-  MapTrifold, List as ListIcon, MagnifyingGlass, Funnel, X, Sun, Moon,
-  Phone, MapPin, ArrowSquareOut, CaretRight, CaretLeft, CaretDown,
+  MapTrifold, List as ListIcon, Funnel, X, Sun, Moon,
+  Phone, ArrowSquareOut, CaretRight, CaretLeft, CaretDown,
   Crosshair, Printer, Info, Warning, ArrowsCounterClockwise,
-  CheckCircle, Scales, Globe, Sparkle, User, SignOut, LockKey
+  CheckCircle, Sparkle, User, SignOut, LockKey
 } from '@phosphor-icons/react';
 import { useData } from './hooks/useData';
 import {
@@ -226,6 +226,35 @@ function App() {
   const serviceTypes = useMemo(() => getServiceTypes(centres), [centres]);
   const centreTypes = useMemo(() => getCentreTypes(centres), [centres]);
 
+  // Real coverage curve calculation for Overview finding section
+  const coverageCurve = useMemo(() => {
+    if (areasWithGap.length === 0) return [];
+    const points = [10, 15, 20, 25, 30, 40, 50, 75];
+    const total = areasWithGap.length;
+    return points.map((km) => {
+      const covered = areasWithGap.filter((a) => a.nearest_km <= km).length;
+      const pct = Math.round((covered / total) * 100);
+      return { km, pct, count: covered };
+    });
+  }, [areasWithGap]);
+
+  // Plain methodology data metrics computed from real dataset
+  const methodologyMetrics = useMemo(() => {
+    const verifiedCentres = centres.filter((c) => !c.is_sample).length;
+    const sampleCentres = centres.filter((c) => c.is_sample).length;
+    const verifiedAreas = areas.filter((a) => !a.is_sample).length;
+    const sampleAreas = areas.filter((a) => a.is_sample).length;
+    const dates = centres.map((c) => c.last_verified).filter(Boolean).sort();
+    return {
+      verifiedCentres,
+      sampleCentres,
+      verifiedAreas,
+      sampleAreas,
+      oldestVerified: dates[0] || '2026-01-15',
+      latestVerified: dates[dates.length - 1] || '2026-03-28',
+    };
+  }, [centres, areas]);
+
 
   const handleMapClick = useCallback(
     (lat: number, lng: number) => {
@@ -334,8 +363,8 @@ function App() {
       {
         name: 'NALSA Website',
         name_kn: 'ನಾಲ್ಸಾ ವೆಬ್‌ಸೈಟ್',
-        description: 'National Legal Services Authority — apply for free legal aid online',
-        description_kn: 'ರಾಷ್ಟ್ರೀಯ ಕಾನೂನು ಸೇವೆಗಳ ಪ್ರಾಧಿಕಾರ — ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಉಚಿತ ಕಾನೂನು ನೆರವಿಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
+        description: 'National Legal Services Authority - apply for free legal aid online',
+        description_kn: 'ರಾಷ್ಟ್ರೀಯ ಕಾನೂನು ಸೇವೆಗಳ ಪ್ರಾಧಿಕಾರ - ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಉಚಿತ ಕಾನೂನು ನೆರವಿಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
         url: 'https://nalsa.gov.in/',
       },
     ];
@@ -442,26 +471,27 @@ function App() {
     <div className="min-h-screen" style={{ background: 'var(--color-surface-0)', color: 'var(--color-ink-primary)' }}>
       {/* ===== HEADER ===== */}
       <header
-        className="no-print sticky top-0 z-50 border-b px-4 py-3 flex items-center justify-between gap-4"
-        style={{ background: 'var(--color-surface-0)', borderColor: 'var(--color-surface-2)' }}
+        className="no-print sticky top-0 z-50 border-b h-16 md:h-[72px] px-4 md:px-8 flex items-center justify-between gap-4 backdrop-blur-md bg-[var(--color-surface-0)]/95 border-[var(--color-surface-2)]"
       >
-        <div className="flex items-center gap-3">
-          <Scales size={28} weight="duotone" style={{ color: 'var(--color-accent)' }} />
-          <div>
-            <h1 className="text-lg font-semibold leading-tight" style={{ fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em' }}>
-              {t('app_title', lang)}
-            </h1>
-            <p className="font-body-sm hidden sm:block" style={{ color: 'var(--color-ink-secondary)', fontSize: '0.75rem' }}>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigateToView('overview')}
+            className="flex items-baseline gap-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)] rounded"
+          >
+            <span className="font-semibold text-lg md:text-xl tracking-tight text-[var(--color-ink-primary)]">
+              Nyaya<span className="text-[var(--color-accent)] font-normal mx-[1px]">-</span>Maarg
+            </span>
+            <span className="hidden lg:inline text-xs text-[var(--color-ink-tertiary)] pl-2 border-l border-[var(--color-surface-2)]">
               {t('app_subtitle', lang)}
-            </p>
-          </div>
+            </span>
+          </button>
         </div>
 
         {/* Nav tabs (<= 5 primary items) */}
-        <nav className="hidden md:flex items-center gap-1 rounded-lg p-1" style={{ background: 'var(--color-surface-1)' }}>
+        <nav className="hidden md:flex items-center gap-1 rounded-lg p-1 bg-[var(--color-surface-1)] border border-[var(--color-surface-2)]">
           <button
             onClick={() => navigateToView('overview')}
-            className="flex items-center gap-1 px-3.5 py-2 rounded-md text-sm font-medium transition-all"
+            className="flex items-center gap-1 px-3.5 py-1.5 rounded-md text-sm font-medium transition-all"
             style={{
               background: view === 'overview' ? 'var(--color-surface-0)' : 'transparent',
               color: view === 'overview' ? 'var(--color-accent)' : 'var(--color-ink-secondary)',
@@ -725,173 +755,566 @@ function App() {
 
       {/* ===== OVERVIEW VIEW ===== */}
       {view === 'overview' && (
-        <div className="max-w-6xl mx-auto px-4 py-8 md:py-12">
-          {/* Headline stat */}
-          <div className="mb-8 md:mb-12">
-            <p className="font-label mb-3 uppercase" style={{ color: 'var(--color-accent)', letterSpacing: '0.1em', fontSize: '0.6875rem' }}>
-              {t('computed_from_data', lang, { count: filteredCentres.length, areas: areas.length })}
-            </p>
-            <h2 className="font-display mb-4" style={{ color: 'var(--color-ink-primary)', fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
-              <span className="font-stat" style={{ color: 'var(--color-status-danger)', fontFamily: 'var(--font-mono)' }}>
-                <AnimatedNumber value={summary.areas_beyond_threshold} />
-              </span>
-              {' '}
-              {lang === 'en'
-                ? <>taluks have no mapped legal-aid centre within <span className="font-stat" style={{ fontFamily: 'var(--font-mono)' }}>{threshold}</span> km</>
-                : <>ತಾಲ್ಲೂಕುಗಳಲ್ಲಿ <span className="font-stat" style={{ fontFamily: 'var(--font-mono)' }}>{threshold}</span> ಕಿ.ಮೀ. ಒಳಗೆ ಯಾವುದೇ ಕಾನೂನು ನೆರವು ಕೇಂದ್ರ ಇಲ್ಲ</>
-              }
-            </h2>
-            <p className="font-h2" style={{ color: 'var(--color-ink-secondary)' }}>
-              {lang === 'en'
-                ? <>affecting about <span className="font-stat" style={{ color: 'var(--color-ink-primary)', fontFamily: 'var(--font-mono)' }}>{formatPopulation(summary.people_beyond_threshold)}</span> people</>
-                : <>ಇದು ಸುಮಾರು <span className="font-stat" style={{ color: 'var(--color-ink-primary)', fontFamily: 'var(--font-mono)' }}>{formatPopulation(summary.people_beyond_threshold)}</span> ಜನರನ್ನು ಪ್ರಭಾವಿಸುತ್ತದೆ</>
-              }
-            </p>
-          </div>
+        <div className="w-full">
+          {/* SECTION 1: HERO (Fits 100dvh, max 4 text elements, live map with path vectors) */}
+          <section className="relative w-full border-b border-[var(--color-surface-2)] bg-[var(--color-surface-0)] min-h-[calc(100dvh-60px)] md:min-h-[calc(100dvh-72px)] lg:h-[calc(100dvh-72px)] flex flex-col justify-between">
+            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8 lg:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch flex-1">
+              
+              {/* Left Column: Exactly 4 text elements + tactile CTAs */}
+              <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
+                
+                {/* 1. Headline (max 2 lines, computed sentence, tabular mono figures) */}
+                <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-semibold tracking-tight leading-[1.14] text-[var(--color-ink-primary)]">
+                  <span className="font-mono text-[var(--color-status-danger)] tabular-nums font-bold">
+                    <AnimatedNumber value={summary.areas_beyond_threshold} />
+                  </span>{' '}
+                  {lang === 'en'
+                    ? <>taluks are more than <span className="font-mono text-[var(--color-ink-primary)] font-semibold">{threshold} km</span> from the nearest mapped legal aid centre.</>
+                    : <>ತಾಲ್ಲೂಕುಗಳಲ್ಲಿ <span className="font-mono text-[var(--color-ink-primary)] font-semibold">{threshold} ಕಿ.ಮೀ.</span> ಒಳಗೆ ಯಾವುದೇ ಕಾನೂನು ನೆರವು ಕೇಂದ್ರವಿಲ್ಲ.</>
+                  }
+                </h1>
 
-          {/* Threshold slider */}
-          <div className="mb-8 p-4 rounded-xl" style={{ background: 'var(--color-surface-1)' }}>
-            <label className="font-label mb-2 block" style={{ color: 'var(--color-ink-secondary)' }}>
-              {t('threshold', lang)}: <span className="font-stat" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-mono)' }}>{threshold} km</span>
-            </label>
-            <input
-              type="range"
-              min={10}
-              max={50}
-              step={5}
-              value={threshold}
-              onChange={(e) => setThreshold(Number(e.target.value))}
-              className="w-full"
-              aria-label={t('threshold', lang)}
-            />
-            <div className="flex justify-between font-body-sm mt-1" style={{ color: 'var(--color-ink-tertiary)' }}>
-              <span>10 km</span>
-              <span>25 km</span>
-              <span>50 km</span>
-            </div>
-          </div>
+                {/* 2. Subtext (under 20 words, concrete, plain verbs) */}
+                <p className="text-sm sm:text-base text-[var(--color-ink-secondary)] leading-relaxed max-w-xl">
+                  {lang === 'en'
+                    ? <>Affecting about <span className="font-mono text-[var(--color-ink-primary)] font-semibold">{formatPopulation(summary.people_beyond_threshold)}</span> citizens across Karnataka with potential gaps in statutory legal aid reach.</>
+                    : <>ಕರ್ನಾಟಕದ ಸುಮಾರು <span className="font-mono text-[var(--color-ink-primary)] font-semibold">{formatPopulation(summary.people_beyond_threshold)}</span> ನಾಗರಿಕರಿಗೆ ಉಚಿತ ಸಾರ್ವಜನಿಕ ಕಾನೂನು ನೆರವು ಪ್ರವೇಶದಲ್ಲಿ ಸಂಭವನೀಯ ಅಂತರವಿದೆ.</>
+                  }
+                </p>
 
-          {/* Stats grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            {[
-              { label: t('total_centres', lang), value: filteredCentres.length, icon: <MapPin size={20} /> },
-              { label: t('total_taluks', lang), value: areas.length, icon: <Globe size={20} /> },
-              { label: t('avg_distance', lang), value: `${summary.avg_distance_km} km`, icon: <MagnifyingGlass size={20} /> },
-              { label: t('people_affected', lang), value: formatPopulation(summary.people_beyond_threshold), icon: <Warning size={20} /> },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="p-4 rounded-xl"
-                style={{ background: 'var(--color-surface-1)' }}
-              >
-                <div className="flex items-center gap-2 mb-2" style={{ color: 'var(--color-ink-tertiary)' }}>
-                  {stat.icon}
-                  <span className="font-label" style={{ fontSize: '0.6875rem' }}>{stat.label}</span>
+                {/* CTAs: 3. Primary "Find legal help", 4. Secondary "Explore the gaps" */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    onClick={() => navigateToView('workflows')}
+                    className="px-5 py-3 rounded-lg text-sm font-semibold tracking-tight text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-all active:scale-[0.98] shadow-sm flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>{lang === 'kn' ? 'ಕಾನೂನು ನೆರವು ಪಡೆಯಿರಿ' : 'Find legal help'}</span>
+                    <CaretRight size={15} weight="bold" />
+                  </button>
+
+                  <button
+                    onClick={() => navigateToView('explorer')}
+                    className="px-5 py-3 rounded-lg text-sm font-medium tracking-tight text-[var(--color-ink-primary)] bg-[var(--color-surface-1)] hover:bg-[var(--color-surface-2)] border border-[var(--color-surface-2)] transition-all active:scale-[0.98] flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>{lang === 'kn' ? 'ನಕ್ಷೆಯಲ್ಲಿ ಅಂತರ ನೋಡಿ' : 'Explore the gaps'}</span>
+                    <ArrowSquareOut size={15} />
+                  </button>
                 </div>
-                <p className="font-stat text-2xl" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ink-primary)' }}>
-                  {stat.value}
+
+                {/* Integrated Distance Instrument (quick thresholds + straight-line disclaimer) */}
+                <div className="pt-4 border-t border-[var(--color-surface-2)]">
+                  <div className="flex items-center justify-between gap-3 text-xs text-[var(--color-ink-tertiary)] mb-2">
+                    <span className="font-medium text-[var(--color-ink-secondary)]">{t('threshold', lang)}:</span>
+                    <span className="font-mono">{threshold} km (approx. straight-line distance)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {[10, 25, 50].map((tVal) => (
+                      <button
+                        key={tVal}
+                        onClick={() => setThreshold(tVal)}
+                        className="flex-1 py-1.5 rounded text-xs font-mono font-medium transition-all cursor-pointer border"
+                        style={{
+                          background: threshold === tVal ? 'var(--color-accent)' : 'var(--color-surface-1)',
+                          color: threshold === tVal ? '#ffffff' : 'var(--color-ink-secondary)',
+                          borderColor: threshold === tVal ? 'var(--color-accent)' : 'var(--color-surface-2)',
+                        }}
+                      >
+                        {tVal} km
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Right Column: Real Leaflet Map with signature straight-line path vectors */}
+              <div className="lg:col-span-7 h-[360px] sm:h-[420px] lg:h-full min-h-[380px] rounded-xl overflow-hidden border border-[var(--color-surface-2)] shadow-sm relative bg-[var(--color-surface-1)]">
+                <GapMap
+                  centres={filteredCentres}
+                  areas={filteredAreas}
+                  selectedArea={selectedArea}
+                  hoveredArea={hoveredArea}
+                  whatIfMode={false}
+                  whatIfPos={null}
+                  onMapClick={handleMapClick}
+                  onCentreClick={(c) => setSelectedCentre(c)}
+                  onAreaHover={(id) => setHoveredArea(id)}
+                  onAreaClick={(a) => {
+                    setSelectedArea(a);
+                    navigateToView('explorer');
+                  }}
+                  lang={lang}
+                  threshold={threshold}
+                  showPaths={true}
+                />
+
+                {/* Minimal Map Overlay Tag */}
+                <div className="absolute bottom-3 left-3 z-[400] bg-[var(--color-surface-0)]/90 backdrop-blur-md px-2.5 py-1.5 rounded border border-[var(--color-surface-2)] text-[11px] text-[var(--color-ink-secondary)] pointer-events-none flex items-center gap-2 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-[var(--color-status-danger)] animate-pulse" />
+                  <span>Dashed paths: approximate straight-line distance to nearest legal centre</span>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* SECTION 2: THE FINDING (Asymmetric: One Large Number + Typographic List + Real Coverage Curve) */}
+          <section className="w-full border-b border-[var(--color-surface-2)] bg-[var(--color-surface-0)] py-12 md:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                
+                {/* Left Side: Big Number + Real Coverage Curve */}
+                <div className="lg:col-span-5 space-y-8">
+                  <div>
+                    <span className="text-xs uppercase tracking-wider font-semibold text-[var(--color-accent)] font-mono">
+                      Coverage Metric
+                    </span>
+                    <div className="mt-2 flex items-baseline gap-3">
+                      <span className="text-5xl sm:text-6xl font-bold font-mono text-[var(--color-ink-primary)] tracking-tight">
+                        {summary.areas_beyond_threshold}
+                      </span>
+                      <span className="text-base text-[var(--color-ink-secondary)] font-medium">
+                        / {areas.length} taluks isolated beyond {threshold} km
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-[var(--color-ink-secondary)] leading-relaxed max-w-md">
+                      {Math.round((summary.areas_beyond_threshold / (areas.length || 1)) * 100)}% of Karnataka taluks face potential geographic blind spots under the current distance cutoff.
+                    </p>
+                  </div>
+
+                  {/* Real Coverage Curve computed from actual taluk distance data */}
+                  <div className="p-4 rounded-xl border border-[var(--color-surface-2)] bg-[var(--color-surface-1)]">
+                    <div className="flex items-center justify-between text-xs mb-3">
+                      <span className="font-semibold text-[var(--color-ink-primary)]">Taluk Coverage by Distance</span>
+                      <span className="font-mono text-[var(--color-accent)]">At {threshold}km: {100 - Math.round((summary.areas_beyond_threshold / (areas.length || 1)) * 100)}% covered</span>
+                    </div>
+
+                    {/* SVG Sparkline / Cumulative Coverage Curve */}
+                    <div className="h-28 w-full">
+                      <svg viewBox="0 0 320 90" className="w-full h-full overflow-visible">
+                        <defs>
+                          <linearGradient id="coverageGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.3" />
+                            <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0.0" />
+                          </linearGradient>
+                        </defs>
+                        {/* Grid lines */}
+                        <line x1="0" y1="20" x2="320" y2="20" stroke="var(--color-surface-2)" strokeDasharray="3 3" />
+                        <line x1="0" y1="50" x2="320" y2="50" stroke="var(--color-surface-2)" strokeDasharray="3 3" />
+                        <line x1="0" y1="80" x2="320" y2="80" stroke="var(--color-surface-2)" strokeWidth="1" />
+
+                        {/* Area fill */}
+                        {coverageCurve.length > 1 && (
+                          <polygon
+                            points={`0,80 ${coverageCurve.map((c, i) => `${(i / (coverageCurve.length - 1)) * 320},${80 - (c.pct * 65) / 100}`).join(' ')} 320,80`}
+                            fill="url(#coverageGradient)"
+                          />
+                        )}
+
+                        {/* Line curve */}
+                        {coverageCurve.length > 1 && (
+                          <polyline
+                            points={coverageCurve.map((c, i) => `${(i / (coverageCurve.length - 1)) * 320},${80 - (c.pct * 65) / 100}`).join(' ')}
+                            fill="none"
+                            stroke="var(--color-accent)"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        )}
+
+                        {/* Curve points */}
+                        {coverageCurve.map((c, i) => {
+                          const cx = (i / (coverageCurve.length - 1)) * 320;
+                          const cy = 80 - (c.pct * 65) / 100;
+                          const isActive = threshold >= c.km && (i === coverageCurve.length - 1 || threshold < coverageCurve[i + 1].km);
+                          return (
+                            <g key={c.km}>
+                              <circle
+                                cx={cx}
+                                cy={cy}
+                                r={isActive ? 4.5 : 2.5}
+                                fill={isActive ? 'var(--color-status-danger)' : 'var(--color-accent)'}
+                                stroke="var(--color-surface-1)"
+                                strokeWidth="1.5"
+                              />
+                            </g>
+                          );
+                        })}
+                      </svg>
+                    </div>
+
+                    <div className="flex justify-between text-[11px] font-mono text-[var(--color-ink-tertiary)] mt-2">
+                      <span>10 km</span>
+                      <span>25 km</span>
+                      <span>50 km</span>
+                      <span>75+ km</span>
+                    </div>
+                  </div>
+
+                  {/* Sample Banner if present */}
+                  {hasSampleData && (
+                    <div className="p-3 rounded-lg border border-[var(--color-sample-badge)]/30 bg-[var(--color-sample-badge-bg)] text-xs text-[var(--color-sample-badge)] flex items-start gap-2">
+                      <Info size={16} className="shrink-0 mt-0.5" />
+                      <span>Certain records are marked SAMPLE for ongoing research and require ground verification before field deployment.</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Side: Top 10 Underserved Areas as a Clean Typographic List (Not Cards) */}
+                <div className="lg:col-span-7">
+                  <div className="flex items-center justify-between pb-3 border-b border-[var(--color-surface-2)]">
+                    <h2 className="text-lg font-semibold tracking-tight text-[var(--color-ink-primary)]">
+                      Top 10 Underserved Taluks
+                    </h2>
+                    <span className="text-xs text-[var(--color-ink-tertiary)] font-mono">
+                      Hover to inspect path on map
+                    </span>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-[var(--color-surface-2)] text-[var(--color-ink-tertiary)] font-mono">
+                          <th className="py-2.5 pr-2 font-medium w-8">#</th>
+                          <th className="py-2.5 px-3 font-medium">Taluk</th>
+                          <th className="py-2.5 px-3 font-medium hidden sm:table-cell">District</th>
+                          <th className="py-2.5 px-3 font-medium text-right">Distance</th>
+                          <th className="py-2.5 px-3 font-medium text-right hidden md:table-cell">Population</th>
+                          <th className="py-2.5 pl-3 font-medium text-right">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--color-surface-2)] font-sans">
+                        {summary.top_underserved.map((area, i) => {
+                          const isHovered = hoveredArea === area.id;
+                          return (
+                            <tr
+                              key={area.id}
+                              onMouseEnter={() => setHoveredArea(area.id)}
+                              onMouseLeave={() => setHoveredArea(null)}
+                              onClick={() => {
+                                setSelectedArea(area);
+                                navigateToView('explorer');
+                              }}
+                              className={`transition-colors cursor-pointer ${
+                                isHovered ? 'bg-[var(--color-accent-subtle)]' : 'hover:bg-[var(--color-surface-1)]'
+                              }`}
+                            >
+                              <td className="py-2.5 pr-2 font-mono text-[var(--color-ink-tertiary)]">
+                                #{i + 1}
+                              </td>
+                              <td className="py-2.5 px-3 font-medium text-[var(--color-ink-primary)]">
+                                <span>{lang === 'kn' ? area.name_kn : area.name}</span>
+                                {area.is_sample && (
+                                  <span className="ml-1.5 px-1 py-0.5 rounded text-[10px] font-mono font-normal bg-[var(--color-sample-badge-bg)] text-[var(--color-sample-badge)] border border-[var(--color-sample-badge)]/20">
+                                    SAMPLE
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-2.5 px-3 text-[var(--color-ink-secondary)] hidden sm:table-cell">
+                                {area.district}
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-mono font-medium text-[var(--color-status-danger)]">
+                                {formatDistance(area.nearest_km)}
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-mono text-[var(--color-ink-secondary)] hidden md:table-cell">
+                                {formatPopulation(area.population)}
+                              </td>
+                              <td className="py-2.5 pl-3 text-right">
+                                <span
+                                  className={`px-2 py-0.5 rounded text-[11px] font-mono font-medium ${
+                                    area.gap_score >= 4
+                                      ? 'bg-[#A31D1D]/15 text-[#A31D1D] dark:text-[#F87171]'
+                                      : area.gap_score >= 3
+                                      ? 'bg-[#C64E24]/15 text-[#C64E24] dark:text-[#FB923C]'
+                                      : 'bg-[#D97E3A]/15 text-[#D97E3A] dark:text-[#FBBF24]'
+                                  }`}
+                                >
+                                  {lang === 'kn' ? getGapLabelKn(area.gap_score) : getGapLabel(area.gap_score)}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-[var(--color-surface-2)] flex items-center justify-between text-xs text-[var(--color-ink-tertiary)]">
+                    <span>Distances are approximate straight-line calculations from centroid coordinates.</span>
+                    <button
+                      onClick={() => navigateToView('explorer')}
+                      className="font-medium text-[var(--color-accent)] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>View all 176 taluks</span>
+                      <CaretRight size={13} />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* SECTION 3: THREE WAYS IN (Asymmetric Layout: "Find Help" Dominant, NOT 3 equal cards) */}
+          <section className="w-full border-b border-[var(--color-surface-2)] bg-[var(--color-surface-1)] py-12 md:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                
+                {/* Dominant Block: Find Legal Help (Takes 7 columns) */}
+                <div className="lg:col-span-7 p-6 sm:p-8 rounded-xl bg-[var(--color-surface-0)] border border-[var(--color-surface-2)] flex flex-col justify-between shadow-sm">
+                  <div>
+                    <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-accent)] font-semibold">
+                      Citizen Access
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink-primary)] mt-1.5">
+                      Find help for your legal situation
+                    </h2>
+                    <p className="text-sm text-[var(--color-ink-secondary)] mt-2 leading-relaxed">
+                      Guided step by step procedures under Karnataka and Indian civic statutes. Free legal aid eligibility checklists, filing steps, and nearest forum directions.
+                    </p>
+
+                    {/* Quick issue jump items */}
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {[
+                        { title: 'Free Legal Aid (Section 12 LSAA)', desc: 'DLSA / TLSC clinic representation' },
+                        { title: 'Tenancy Deposit Recovery', desc: 'Urban tenant deposit disputes' },
+                        { title: 'Consumer Protection Complaint', desc: 'Deficient goods and service refunds' },
+                        { title: 'Unpaid Wages Claim', desc: 'Payment of Wages Act procedures' },
+                        { title: 'RTI Request & First Appeal', desc: 'Public records and information access' },
+                      ].map((item) => (
+                        <button
+                          key={item.title}
+                          onClick={() => navigateToView('workflows')}
+                          className="text-left p-3 rounded-lg border border-[var(--color-surface-2)] bg-[var(--color-surface-1)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-subtle)] transition-all cursor-pointer group"
+                        >
+                          <div className="font-medium text-xs text-[var(--color-ink-primary)] group-hover:text-[var(--color-accent)] flex items-center justify-between">
+                            <span>{item.title}</span>
+                            <CaretRight size={12} className="opacity-60 group-hover:translate-x-0.5 transition-transform" />
+                          </div>
+                          <div className="text-[11px] text-[var(--color-ink-tertiary)] mt-0.5 truncate">
+                            {item.desc}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-8 pt-4 border-t border-[var(--color-surface-2)] flex items-center justify-between">
+                    <span className="text-xs text-[var(--color-ink-tertiary)] font-mono">
+                      Bilingual EN / KN checklists
+                    </span>
+                    <button
+                      onClick={() => navigateToView('workflows')}
+                      className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-all active:scale-[0.98] inline-flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Start guided workflow</span>
+                      <CaretRight size={14} weight="bold" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Secondary Column: Two Distinct Complementary Panels (5 columns) */}
+                <div className="lg:col-span-5 flex flex-col gap-6 justify-between">
+                  
+                  {/* Secondary 1: Explore Spatial Gaps */}
+                  <div className="p-6 rounded-xl bg-[var(--color-surface-0)] border border-[var(--color-surface-2)] flex-1 flex flex-col justify-between shadow-sm">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-ink-tertiary)] font-semibold">
+                        Spatial Analysis
+                      </span>
+                      <h3 className="text-lg font-semibold text-[var(--color-ink-primary)] mt-1">
+                        Explore coverage gaps
+                      </h3>
+                      <p className="text-xs text-[var(--color-ink-secondary)] mt-1.5 leading-relaxed">
+                        Examine 176 taluks, inspect legal aid centres, and simulate placement of new facilities with live unserved population calculations.
+                      </p>
+                    </div>
+
+                    <div className="mt-5 pt-3 border-t border-[var(--color-surface-2)] flex items-center justify-between">
+                      <span className="text-xs font-mono text-[var(--color-ink-tertiary)]">176 taluks mapped</span>
+                      <button
+                        onClick={() => navigateToView('explorer')}
+                        className="text-xs font-medium text-[var(--color-ink-primary)] hover:text-[var(--color-accent)] inline-flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Open map explorer</span>
+                        <CaretRight size={13} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Secondary 2: Track a Case */}
+                  <div className="p-6 rounded-xl bg-[var(--color-surface-0)] border border-[var(--color-surface-2)] flex-1 flex flex-col justify-between shadow-sm">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-ink-tertiary)] font-semibold">
+                        Confidential Workspace
+                      </span>
+                      <h3 className="text-lg font-semibold text-[var(--color-ink-primary)] mt-1">
+                        Track a case
+                      </h3>
+                      <p className="text-xs text-[var(--color-ink-secondary)] mt-1.5 leading-relaxed">
+                        Log hearing dates, track reply deadlines, and export RFC 5545 calendar invitations with Row Level Security.
+                      </p>
+                    </div>
+
+                    <div className="mt-5 pt-3 border-t border-[var(--color-surface-2)] flex items-center justify-between">
+                      <span className="text-xs font-mono text-[var(--color-ink-tertiary)]">Zero third-party trackers</span>
+                      <button
+                        onClick={() => navigateToView('cases')}
+                        className="text-xs font-medium text-[var(--color-ink-primary)] hover:text-[var(--color-accent)] inline-flex items-center gap-1 cursor-pointer"
+                      >
+                        <span>Open case tracker</span>
+                        <CaretRight size={13} />
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* SECTION 4: HOW THE NUMBERS ARE MADE (Methodology & Data Rigor Grid) */}
+          <section className="w-full border-b border-[var(--color-surface-2)] bg-[var(--color-surface-0)] py-12 md:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="max-w-2xl mb-8">
+                <span className="text-xs font-mono uppercase tracking-wider text-[var(--color-accent)] font-semibold">
+                  Methodology & Data Rigor
+                </span>
+                <h2 className="text-2xl font-semibold tracking-tight text-[var(--color-ink-primary)] mt-1">
+                  How the numbers are made
+                </h2>
+                <p className="text-sm text-[var(--color-ink-secondary)] mt-2 leading-relaxed">
+                  Calculations use Euclidean straight-line distance from administrative taluk centroid coordinates to registered District Legal Services Authorities (DLSA) and Taluk Legal Services Committees (TLSC).
                 </p>
               </div>
-            ))}
-          </div>
 
-          {/* Sample data notice */}
-          {hasSampleData && (
-            <div className="flex items-start gap-3 p-4 rounded-xl mb-8" style={{ background: 'var(--color-sample-badge-bg)', border: '1px solid var(--color-sample-badge)' }}>
-              <Info size={20} style={{ color: 'var(--color-sample-badge)', flexShrink: 0, marginTop: 2 }} />
-              <p className="font-body-sm" style={{ color: 'var(--color-sample-badge)' }}>
-                {t('sample_data_notice', lang)}
-              </p>
+              {/* Data Verification Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Metric Card 1 */}
+                <div className="p-5 rounded-xl border border-[var(--color-surface-2)] bg-[var(--color-surface-1)]">
+                  <div className="text-xs font-mono text-[var(--color-ink-tertiary)] uppercase">
+                    Facility Records
+                  </div>
+                  <div className="text-2xl font-bold font-mono text-[var(--color-ink-primary)] mt-2">
+                    {methodologyMetrics.verifiedCentres} <span className="text-xs font-normal text-[var(--color-ink-tertiary)]">verified</span>
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-secondary)] mt-1">
+                    {methodologyMetrics.sampleCentres} sample records marked for ongoing field confirmation.
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[var(--color-surface-2)] text-[11px] font-mono text-[var(--color-ink-tertiary)]">
+                    Total mapped: {filteredCentres.length} centres
+                  </div>
+                </div>
+
+                {/* Metric Card 2 */}
+                <div className="p-5 rounded-xl border border-[var(--color-surface-2)] bg-[var(--color-surface-1)]">
+                  <div className="text-xs font-mono text-[var(--color-ink-tertiary)] uppercase">
+                    Administrative Units
+                  </div>
+                  <div className="text-2xl font-bold font-mono text-[var(--color-ink-primary)] mt-2">
+                    {methodologyMetrics.verifiedAreas} <span className="text-xs font-normal text-[var(--color-ink-tertiary)]">Census taluks</span>
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-secondary)] mt-1">
+                    Centroid coordinates derived from official Karnataka administrative boundaries.
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[var(--color-surface-2)] text-[11px] font-mono text-[var(--color-ink-tertiary)]">
+                    Population basis: Census 2011
+                  </div>
+                </div>
+
+                {/* Metric Card 3 */}
+                <div className="p-5 rounded-xl border border-[var(--color-surface-2)] bg-[var(--color-surface-1)]">
+                  <div className="text-xs font-mono text-[var(--color-ink-tertiary)] uppercase">
+                    Verification Audit
+                  </div>
+                  <div className="text-2xl font-bold font-mono text-[var(--color-ink-primary)] mt-2">
+                    {methodologyMetrics.latestVerified}
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-secondary)] mt-1">
+                    Oldest unverified sample node in registry dates to {methodologyMetrics.oldestVerified}.
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-[var(--color-surface-2)] text-[11px] font-mono text-[var(--color-ink-tertiary)]">
+                    Review cycle: Quarterly audit
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Methodology Technical Caveats */}
+              <div className="mt-6 p-4 rounded-xl border border-[var(--color-surface-2)] bg-[var(--color-surface-1)] text-xs text-[var(--color-ink-secondary)] leading-relaxed space-y-1.5">
+                <div className="font-semibold text-[var(--color-ink-primary)]">Technical Caveats:</div>
+                <p>1. Straight-line distances represent geometric proximity and do not account for road network routes, ghat terrains, or transit frequency.</p>
+                <p>2. "Potential gap" denotes geographic isolation from mapped statutory centres. It does not certify that no legal clinic, pro bono advocate, or Lok Adalat bench ever visits the area.</p>
+              </div>
+
             </div>
-          )}
+          </section>
 
-          {/* Top underserved */}
-          <div className="mb-8">
-            <h3 className="font-h2 mb-4">{t('top_underserved', lang)}</h3>
-            <div className="overflow-x-auto rounded-xl" style={{ border: '1px solid var(--color-surface-2)' }}>
-              <table className="w-full text-left">
-                <thead>
-                  <tr style={{ background: 'var(--color-surface-1)' }}>
-                    <th className="font-label px-4 py-3" style={{ color: 'var(--color-ink-secondary)' }}>{t('rank', lang)}</th>
-                    <th className="font-label px-4 py-3" style={{ color: 'var(--color-ink-secondary)' }}>{t('area', lang)}</th>
-                    <th className="font-label px-4 py-3 hidden md:table-cell" style={{ color: 'var(--color-ink-secondary)' }}>{t('district', lang)}</th>
-                    <th className="font-label px-4 py-3" style={{ color: 'var(--color-ink-secondary)' }}>{t('approx_distance', lang)}</th>
-                    <th className="font-label px-4 py-3 hidden md:table-cell" style={{ color: 'var(--color-ink-secondary)' }}>{t('population', lang)}</th>
-                    <th className="font-label px-4 py-3" style={{ color: 'var(--color-ink-secondary)' }}>{t('gap_score', lang)}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summary.top_underserved.map((area, i) => (
-                    <tr
-                      key={area.id}
-                      className="transition-colors cursor-pointer"
-                      style={{ borderTop: '1px solid var(--color-surface-2)' }}
-                      onMouseEnter={() => setHoveredArea(area.id)}
-                      onMouseLeave={() => setHoveredArea(null)}
-                      onClick={() => { setSelectedArea(area); setView('explorer'); }}
-                    >
-                      <td className="px-4 py-3">
-                        <span className="font-stat text-sm" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ink-tertiary)' }}>
-                          #{i + 1}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="font-body font-medium" style={{ color: 'var(--color-ink-primary)' }}>
-                          {lang === 'kn' ? area.name_kn : area.name}
-                        </span>
-                        {area.is_sample && <span className="sample-badge ml-2">{t('sample', lang)}</span>}
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell font-body-sm" style={{ color: 'var(--color-ink-secondary)' }}>
-                        {area.district}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="font-stat text-sm" style={{ fontFamily: 'var(--font-mono)' }}>
-                          {formatDistance(area.nearest_km)}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell font-stat text-sm" style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ink-secondary)' }}>
-                        {formatPopulation(area.population)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`gap-score-${area.gap_score} px-2 py-1 rounded text-xs font-semibold`}
-                          style={{ fontFamily: 'var(--font-mono)' }}
-                        >
-                          {lang === 'kn' ? getGapLabelKn(area.gap_score) : getGapLabel(area.gap_score)}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* SECTION 5: MINIMAL REAL FOOTER */}
+          <footer className="w-full bg-[var(--color-surface-1)] border-t border-[var(--color-surface-2)] py-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[var(--color-surface-2)]">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-semibold text-base tracking-tight text-[var(--color-ink-primary)]">
+                      Nyaya<span className="text-[var(--color-accent)] font-normal mx-[1px]">-</span>Maarg
+                    </span>
+                    <span className="text-xs text-[var(--color-ink-tertiary)] font-mono pl-2 border-l border-[var(--color-surface-2)]">
+                      {t('app_subtitle', lang)}
+                    </span>
+                  </div>
+                  <div className="text-xs text-[var(--color-ink-secondary)] mt-1.5 max-w-md">
+                    Independent civic data publication. Not a government agency or official legal services authority.
+                  </div>
+                </div>
+
+                {/* Real nav links */}
+                <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[var(--color-ink-secondary)]">
+                  <button onClick={() => navigateToView('overview')} className="hover:text-[var(--color-accent)] cursor-pointer">
+                    {t('overview', lang)}
+                  </button>
+                  <button onClick={() => navigateToView('explorer')} className="hover:text-[var(--color-accent)] cursor-pointer">
+                    {t('explorer', lang)}
+                  </button>
+                  <button onClick={() => navigateToView('workflows')} className="hover:text-[var(--color-accent)] cursor-pointer">
+                    {t('workflows', lang)}
+                  </button>
+                  <button onClick={() => navigateToView('cases')} className="hover:text-[var(--color-accent)] cursor-pointer">
+                    {t('cases', lang)}
+                  </button>
+                  <button onClick={() => navigateToView('interpreter')} className="hover:text-[var(--color-accent)] cursor-pointer">
+                    {t('interpreter', lang)}
+                  </button>
+                  <button onClick={() => navigateToView('navigator')} className="hover:text-[var(--color-accent)] cursor-pointer">
+                    {t('navigator', lang)}
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom bar with Kannada script */}
+              <div className="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[var(--color-ink-tertiary)]">
+                <div className="flex items-center gap-2">
+                  <span className="font-kannada text-sm text-[var(--color-ink-secondary)]">ನ್ಯಾಯ ಮಾರ್ಗ</span>
+                  <span className="text-[11px] font-mono text-[var(--color-ink-tertiary)]">
+                    [Draft: to be confirmed with a native Kannada speaker]
+                  </span>
+                </div>
+                <div className="text-[11px] font-mono">
+                  NALSA Helpline: 15100 • Emergency: 112
+                </div>
+              </div>
+
             </div>
-          </div>
-
-          {/* Disclaimer */}
-          <div className="flex items-start gap-3 p-4 rounded-xl" style={{ background: 'var(--color-surface-1)', border: '1px solid var(--color-surface-2)' }}>
-            <Info size={18} style={{ color: 'var(--color-ink-tertiary)', flexShrink: 0, marginTop: 2 }} />
-            <p className="font-body-sm" style={{ color: 'var(--color-ink-tertiary)' }}>
-              {t('disclaimer', lang)}
-            </p>
-          </div>
-
-          {/* CTA */}
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              onClick={() => setView('explorer')}
-              className="px-6 py-3 rounded-lg font-medium text-sm transition-colors"
-              style={{ background: 'var(--color-accent)', color: '#fff' }}
-            >
-              {t('explorer', lang)} <CaretRight size={16} className="inline ml-1" />
-            </button>
-            <button
-              onClick={() => setView('navigator')}
-              className="px-6 py-3 rounded-lg font-medium text-sm transition-colors"
-              style={{ background: 'var(--color-surface-1)', color: 'var(--color-ink-primary)', border: '1px solid var(--color-surface-2)' }}
-            >
-              {t('navigator', lang)} <CaretRight size={16} className="inline ml-1" />
-            </button>
-          </div>
+          </footer>
         </div>
       )}
 

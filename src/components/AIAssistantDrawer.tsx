@@ -498,7 +498,7 @@ export default function AIAssistantDrawer({
           </button>
         </form>
         <div className="flex items-center justify-between mt-2 text-[10px]" style={{ color: 'var(--color-ink-tertiary)' }}>
-          <span>Grounded only on CivicBlindspot database</span>
+          <span>Grounded only on Nyaya-Maarg database</span>
           <span className="font-mono">{input.length}/1000</span>
         </div>
       </div>

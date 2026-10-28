@@ -15,18 +15,19 @@ interface GapMapProps {
   onAreaClick: (area: AreaWithGap) => void;
   lang: Language;
   threshold: number;
+  showPaths?: boolean;
 }
 
 const KARNATAKA_CENTER: [number, number] = [14.85, 75.85];
 const DEFAULT_ZOOM = 7;
 
-// Color ramp for gap scores matching design system
+// Color ramp for gap scores matching Nyaya-Maarg sequential Amber-to-Crimson design system
 const GAP_COLORS: Record<number, string> = {
-  0: '#10B981', // Well-served (<10km) - green
-  1: '#FBBF24', // Adequate (10-25km) - yellow
-  2: '#F97316', // Underserved (25-50km) - orange
-  3: '#EF4444', // Poorly served (50-75km) - red-orange
-  4: '#991B1B', // Critical gap (>75km) - deep red
+  0: '#7BA672', // Well-served (<10km) - muted sage
+  1: '#E7B874', // Adequate (10-25km) - amber
+  2: '#D97E3A', // Underserved (25-50km) - rust
+  3: '#C64E24', // Poorly served (50-75km) - crimson
+  4: '#A31D1D', // Critical gap (>75km) - deep maroon
 };
 
 export default function GapMap({
@@ -42,6 +43,7 @@ export default function GapMap({
   onAreaClick,
   lang,
   threshold,
+  showPaths = false,
 }: GapMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -50,6 +52,7 @@ export default function GapMap({
   // Layer groups
   const areasLayerRef = useRef<L.LayerGroup>(L.layerGroup());
   const centresLayerRef = useRef<L.LayerGroup>(L.layerGroup());
+  const pathsLayerRef = useRef<L.LayerGroup>(L.layerGroup());
   const whatIfLayerRef = useRef<L.LayerGroup>(L.layerGroup());
   const connectionLineRef = useRef<L.Polyline | null>(null);
 
@@ -80,6 +83,7 @@ export default function GapMap({
 
     tileLayerRef.current = tiles;
 
+    pathsLayerRef.current.addTo(map);
     areasLayerRef.current.addTo(map);
     centresLayerRef.current.addTo(map);
     whatIfLayerRef.current.addTo(map);
@@ -199,15 +203,15 @@ export default function GapMap({
     layer.clearLayers();
 
     centres.forEach((centre) => {
-      // Create custom SVG Pin for legal-aid centres
+      // Create custom SVG Pin for legal-aid centres (Nyaya-Maarg geometric marker)
       const iconHtml = `
         <div style="
-          width: 28px;
-          height: 28px;
-          background: #1B7A6E;
+          width: 26px;
+          height: 26px;
+          background: #1D5CA8;
           border: 2px solid #ffffff;
           border-radius: 50%;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          box-shadow: 0 2px 8px rgba(29,92,168,0.35);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -215,8 +219,9 @@ export default function GapMap({
           cursor: pointer;
           transition: transform 0.15s ease-out;
         " title="${centre.name}">
-          <svg width="15" height="15" viewBox="0 0 256 256" fill="currentColor">
-            <path d="M240,104H224V88a8,8,0,0,0-8-8H136V40h16a8,8,0,0,0,0-16H104a8,8,0,0,0,0,16h16V80H40a8,8,0,0,0-8,8v16H16a8,8,0,0,0,0,16H32v96a8,8,0,0,0,8,8H216a8,8,0,0,0,8-8V120h16a8,8,0,0,0,0-16ZM48,96H208v8H48Zm160,112H48V120H208Zm-120-80h16v64H88Zm40,0h16v64H128Zm40,0h16v64H168Z"/>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" fill="currentColor"/>
+            <circle cx="12" cy="12" r="8"/>
           </svg>
         </div>
       `;
@@ -224,16 +229,16 @@ export default function GapMap({
       const customIcon = L.divIcon({
         className: 'centre-marker-icon',
         html: iconHtml,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-        popupAnchor: [0, -14],
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
+        popupAnchor: [0, -13],
       });
 
       const marker = L.marker([centre.lat, centre.lng], { icon: customIcon });
 
       const popupHtml = `
         <div style="font-family: var(--font-sans); padding: 12px 14px; min-width: 220px;">
-          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1B7A6E; margin-bottom: 2px;">
+          <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #1D5CA8; margin-bottom: 2px;">
             ${centre.type} ${centre.is_sample ? '<span style="background: #FEF3C7; color: #B45309; padding: 1px 4px; border-radius: 3px; font-size: 9px; margin-left: 4px;">SAMPLE</span>' : ''}
           </div>
           <div style="font-weight: 700; font-size: 14px; color: var(--color-ink-primary); line-height: 1.25; margin-bottom: 6px;">
@@ -268,6 +273,61 @@ export default function GapMap({
     });
   }, [centres, lang, onCentreClick]);
 
+  // Render signature straight-line paths from underserved areas to nearest centres
+  useEffect(() => {
+    const layer = pathsLayerRef.current;
+    layer.clearLayers();
+
+    if (!showPaths) return;
+
+    // Filter underserved areas (beyond threshold or top gap scores), sorted by distance descending
+    const underserved = [...areas]
+      .filter((a) => a.nearest_km > threshold && a.nearest_centre_id)
+      .sort((a, b) => b.nearest_km - a.nearest_km);
+
+    underserved.forEach((area, index) => {
+      const nearest = centres.find((c) => c.id === area.nearest_centre_id);
+      if (!nearest) return;
+
+      const isHovered = hoveredArea === area.id;
+      const isSelected = selectedArea?.id === area.id;
+      const isHighlighted = isHovered || isSelected;
+
+      // Color from Amber-to-Crimson sequential ramp or accent on highlight
+      const lineColor = isHighlighted
+        ? '#1D5CA8'
+        : area.gap_score >= 4
+        ? '#A31D1D'
+        : area.gap_score >= 3
+        ? '#C64E24'
+        : '#D97E3A';
+
+      const line = L.polyline(
+        [
+          [area.centroid_lat, area.centroid_lng],
+          [nearest.lat, nearest.lng],
+        ],
+        {
+          color: lineColor,
+          weight: isHighlighted ? 3 : 1.25,
+          opacity: isHighlighted ? 0.95 : Math.max(0.2, 0.65 - index * 0.015),
+          dashArray: isHighlighted ? undefined : '3, 5',
+        }
+      );
+
+      line.bindTooltip(
+        `<div style="font-family: var(--font-sans); font-size: 11px; padding: 2px 4px;">
+          <strong>${lang === 'kn' ? area.name_kn : area.name} → ${nearest.name}</strong><br/>
+          <span style="font-family: var(--font-mono); color: #C64E24;">${area.nearest_km} km</span>
+          <span style="color: #64748b;"> (approx. straight-line distance)</span>
+        </div>`,
+        { sticky: true, opacity: 0.95 }
+      );
+
+      line.addTo(layer);
+    });
+  }, [areas, centres, threshold, showPaths, hoveredArea, selectedArea, lang]);
+
   // Connect selected area to its nearest centre with a line
   useEffect(() => {
     const map = mapRef.current;
@@ -287,10 +347,10 @@ export default function GapMap({
             [nearestCentre.lat, nearestCentre.lng],
           ],
           {
-            color: selectedArea.nearest_km > threshold ? '#EF4444' : '#1B7A6E',
+            color: selectedArea.nearest_km > threshold ? '#C64E24' : '#1D5CA8',
             weight: 3,
-            dashArray: '6, 8',
-            opacity: 0.85,
+            dashArray: '5, 6',
+            opacity: 0.9,
           }
         ).addTo(map);
 
@@ -308,10 +368,10 @@ export default function GapMap({
       // 1. Simulation radius circle
       L.circle([whatIfPos.lat, whatIfPos.lng], {
         radius: threshold * 1000,
-        color: '#1B7A6E',
+        color: '#1D5CA8',
         weight: 2,
         dashArray: '6, 6',
-        fillColor: '#1B7A6E',
+        fillColor: '#1D5CA8',
         fillOpacity: 0.15,
       }).addTo(layer);
 

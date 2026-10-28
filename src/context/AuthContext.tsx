@@ -18,7 +18,7 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const GUEST_KEY = 'civicblindspot_guest_mode';
+const GUEST_KEY = 'nyaya_maarg_guest_mode';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

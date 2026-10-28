@@ -96,7 +96,7 @@ export default function InsightsView({
   const surfaceBorder = 'var(--color-surface-2)';
 
   const handleDownloadCSV = () => {
-    downloadAreasCSV(areasWithGap, `civic_blindspot_taluks_${threshold}km.csv`);
+    downloadAreasCSV(areasWithGap, `nyaya_maarg_taluks_${threshold}km.csv`);
   };
 
   const handlePrint = () => {

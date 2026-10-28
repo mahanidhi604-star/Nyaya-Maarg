@@ -830,7 +830,7 @@ export const CaseTrackerView: React.FC<CaseTrackerViewProps> = ({
                 <strong>Row-Level Security:</strong> When signed in, cases are stored in Supabase Postgres protected by strict SQL Row-Level Security (`auth.uid() = user_id`). No other account or admin can access your records.
               </p>
               <p>
-                <strong>Zero Analytics / Trackers:</strong> CivicBlindspot does not load third-party analytics, tracking pixels, or advertisement beacons.
+                <strong>Zero Analytics / Trackers:</strong> Nyaya-Maarg does not load third-party analytics, tracking pixels, or advertisement beacons.
               </p>
               <p>
                 <strong>Public Statistics Separation:</strong> Case data is private to you and is never aggregated into the public Insights statistics.

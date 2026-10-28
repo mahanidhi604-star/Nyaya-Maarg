@@ -1,7 +1,7 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 import type { UserCase, CaseEvent } from '../types';
 
-const STORAGE_PREFIX = 'civicblindspot_cases_';
+const STORAGE_PREFIX = 'nyaya_maarg_cases_';
 
 // Regex for PII patterns in India: Aadhaar (12 digits with spaces), PAN (5 letters + 4 digits + 1 letter), Phone (10 digits)
 export const PII_REGEX =
@@ -277,7 +277,7 @@ export async function exportAllCasesJSON(userId: string): Promise<void> {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `civic_blindspot_cases_${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `nyaya_maarg_cases_${new Date().toISOString().split('T')[0]}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -302,15 +302,15 @@ export function downloadEventIcs(event: CaseEvent, caseTitle: string): void {
   const icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//CivicBlindspot//Legal Aid Case Tracker//EN',
+    'PRODID:-//Nyaya-Maarg//Legal Aid Case Tracker//EN',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
-    `UID:case_event_${event.id}@civicblindspot.org`,
+    `UID:case_event_${event.id}@nyaya-maarg.org`,
     `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
     `DTSTART;VALUE=DATE:${dateFormatted}`,
     `DTEND;VALUE=DATE:${dateFormatted}`,
     `SUMMARY:${escapeIcs(event.title)} (${escapeIcs(caseTitle)})`,
-    `DESCRIPTION:${escapeIcs(event.notes || 'Legal hearing / compliance deadline in CivicBlindspot')}`,
+    `DESCRIPTION:${escapeIcs(event.notes || 'Legal hearing or compliance deadline in Nyaya-Maarg')}`,
     'STATUS:CONFIRMED',
     'END:VEVENT',
     'END:VCALENDAR',

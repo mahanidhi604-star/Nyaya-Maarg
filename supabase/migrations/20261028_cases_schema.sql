@@ -1,5 +1,5 @@
 -- ========================================================
--- CIVICBLINDSPOT: CASE TRACKING & ROW LEVEL SECURITY (RLS)
+-- NYAYA-MAARG: CASE TRACKING & ROW LEVEL SECURITY (RLS)
 -- ========================================================
 
 -- 1. Enable pgcrypto for UUID generation if not already active

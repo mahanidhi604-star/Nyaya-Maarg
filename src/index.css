@@ -1,40 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+Kannada:wght@400;500;600&display=swap');
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-
 /* ===== DESIGN TOKENS ===== */
 @theme {
-  --color-surface-0: #FAF8F5;
-  --color-surface-1: #F1EFEB;
-  --color-surface-2: #E8E5E0;
-  --color-ink-primary: #1C1B18;
-  --color-ink-secondary: #5C5A54;
-  --color-ink-tertiary: #8A877F;
-  --color-accent: #1B7A6E;
-  --color-accent-hover: #156A5F;
-  --color-accent-subtle: #E6F5F2;
+  --color-surface-0: #F8F9FA;
+  --color-surface-1: #FFFFFF;
+  --color-surface-2: #EEF0F2;
+  --color-surface-3: #E2E5E9;
+  --color-ink-primary: #111318;
+  --color-ink-secondary: #4D535E;
+  --color-ink-tertiary: #7B828F;
+  --color-accent: #1D5CA8;
+  --color-accent-hover: #154B8B;
+  --color-accent-subtle: #EBF3FC;
   --color-status-danger: #C4392D;
   --color-status-warning: #B7791F;
   --color-status-success: #2D7A3A;
-  --color-status-info: #2563EB;
+  --color-status-info: #1D5CA8;
   --color-sample-badge: #B45309;
   --color-sample-badge-bg: #FEF3C7;
-  --color-gap-0: #F7FCB4;
-  --color-gap-1: #FEDC8B;
-  --color-gap-2: #F5A05D;
-  --color-gap-3: #E55C42;
-  --color-gap-4: #BD1B28;
+  --color-gap-0: #F3E8CB;
+  --color-gap-1: #E7B874;
+  --color-gap-2: #D97E3A;
+  --color-gap-3: #C64E24;
+  --color-gap-4: #A31D1D;
 
-  --font-serif: 'Source Serif 4', 'Georgia', serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
-  --font-kannada: 'Noto Sans Kannada', 'DM Sans', sans-serif;
+  --font-serif: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', 'Consolas', monospace;
+  --font-kannada: 'Noto Sans Kannada', 'Geist', sans-serif;
 
-  --shadow-sm: 0 1px 2px rgba(28, 27, 24, 0.06);
-  --shadow-md: 0 2px 8px rgba(28, 27, 24, 0.08);
-  --shadow-lg: 0 8px 24px rgba(28, 27, 24, 0.10);
-  --shadow-xl: 0 16px 48px rgba(28, 27, 24, 0.12);
+  --shadow-sm: 0 1px 2px rgba(17, 19, 24, 0.05);
+  --shadow-md: 0 2px 8px rgba(17, 19, 24, 0.07);
+  --shadow-lg: 0 8px 24px rgba(17, 19, 24, 0.09);
+  --shadow-xl: 0 16px 48px rgba(17, 19, 24, 0.12);
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -46,19 +46,20 @@
 
 /* ===== DARK MODE TOKENS ===== */
 .dark {
-  --color-surface-0: #1A1917;
-  --color-surface-1: #242320;
-  --color-surface-2: #2E2D29;
-  --color-ink-primary: #F0EDE8;
-  --color-ink-secondary: #9E9B94;
-  --color-ink-tertiary: #6B6862;
-  --color-accent: #2DD4B6;
-  --color-accent-hover: #40E0C4;
-  --color-accent-subtle: #1B2E2A;
+  --color-surface-0: #0B0D11;
+  --color-surface-1: #13171F;
+  --color-surface-2: #1D232F;
+  --color-surface-3: #2A3242;
+  --color-ink-primary: #F0F2F5;
+  --color-ink-secondary: #9BA3AF;
+  --color-ink-tertiary: #646E7E;
+  --color-accent: #4889E8;
+  --color-accent-hover: #6BA3F2;
+  --color-accent-subtle: #12243C;
   --color-status-danger: #F87171;
   --color-status-warning: #FBBF24;
   --color-status-success: #4ADE80;
-  --color-status-info: #60A5FA;
+  --color-status-info: #4889E8;
   --color-sample-badge: #F59E0B;
   --color-sample-badge-bg: #422006;
 }
@@ -84,27 +85,27 @@ body {
 
 /* ===== TYPOGRAPHY CLASSES ===== */
 .font-display {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 3.5rem;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  font-size: 3rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
 .font-h1 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 2rem;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
+  font-size: 1.875rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .font-h2 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 1.5rem;
-  line-height: 1.2;
-  letter-spacing: -0.005em;
+  font-size: 1.35rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
 }
 
 .font-h3 {
@@ -208,27 +209,27 @@ body {
 /* ===== GAP SCORE COLORS ===== */
 .gap-score-0 {
   background-color: var(--color-gap-0);
-  color: #1C1B18;
+  color: #111318;
 }
 
 .gap-score-1 {
   background-color: var(--color-gap-1);
-  color: #1C1B18;
+  color: #111318;
 }
 
 .gap-score-2 {
   background-color: var(--color-gap-2);
-  color: #1C1B18;
+  color: #111318;
 }
 
 .gap-score-3 {
   background-color: var(--color-gap-3);
-  color: #fff;
+  color: #ffffff;
 }
 
 .gap-score-4 {
   background-color: var(--color-gap-4);
-  color: #fff;
+  color: #ffffff;
 }
 
 /* ===== SCROLLBAR ===== */

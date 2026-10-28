@@ -139,7 +139,7 @@ export const WorkflowsView: React.FC<WorkflowsViewProps> = ({
         {/* Printable Section Header (visible on print) */}
         <div className="hidden print:block mb-6 border-b pb-4">
           <h1 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-serif)' }}>
-            CivicBlindspot — Legal Workflow Checklist
+            Nyaya-Maarg - Legal Workflow Checklist
           </h1>
           <p className="text-sm text-gray-600">
             Workflow: {lang === 'kn' && activeWorkflow.title_kn ? activeWorkflow.title_kn : activeWorkflow.title} | Verified: {activeWorkflow.last_verified}

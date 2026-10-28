@@ -184,7 +184,7 @@ export async function handleInterpretRequest(
     try {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-      const systemInstruction = `You are the CivicBlindspot Legal Document Interpreter.
+      const systemInstruction = `You are the Nyaya-Maarg Legal Document Interpreter.
 Your role: Plain-language breakdown of Indian legal notices, summons, tenancy letters, RTI orders, and consumer notices.
 CRITICAL BOUNDARIES AND RULES:
 1. NO LEGAL ADVICE: Explain what the document says in simple words. Do NOT tell the user "you should file X" or predict outcomes (no win/loss probabilities).
