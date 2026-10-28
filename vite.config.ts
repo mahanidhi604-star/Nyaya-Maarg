@@ -21,6 +21,16 @@ function assistantApiPlugin(): Plugin {
 
         req.on('end', async () => {
           try {
+            // Validate Supabase JWT token or guest mode
+            const { verifyUserToken } = await server.ssrLoadModule('/src/server/authMiddleware.ts');
+            const authCheck = await verifyUserToken(req, true);
+            if (!authCheck.isAuthenticated && !authCheck.isGuest) {
+              res.statusCode = 401;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: authCheck.error || 'Unauthorized: valid session token required' }));
+              return;
+            }
+
             const parsed = JSON.parse(body || '{}');
             const { handleAssistantRequest } = await server.ssrLoadModule('/src/server/assistantHandler.ts');
             const clientIp = req.socket.remoteAddress || '127.0.0.1';
@@ -50,6 +60,16 @@ function assistantApiPlugin(): Plugin {
 
         req.on('end', async () => {
           try {
+            // Validate Supabase JWT token or guest mode
+            const { verifyUserToken } = await server.ssrLoadModule('/src/server/authMiddleware.ts');
+            const authCheck = await verifyUserToken(req, true);
+            if (!authCheck.isAuthenticated && !authCheck.isGuest) {
+              res.statusCode = 401;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: authCheck.error || 'Unauthorized: valid session token required' }));
+              return;
+            }
+
             const parsed = JSON.parse(body || '{}');
             const { handleInterpretRequest } = await server.ssrLoadModule('/src/server/interpreterHandler.ts');
             const clientIp = req.socket.remoteAddress || '127.0.0.1';
@@ -81,9 +101,6 @@ export default defineConfig({
         manualChunks(id: string) {
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react-router-dom/')) {
             return 'react-vendor';
-          }
-          if (id.includes('node_modules/maplibre-gl/')) {
-            return 'maplibre-vendor';
           }
           if (id.includes('node_modules/leaflet/')) {
             return 'leaflet-vendor';
