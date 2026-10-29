@@ -45,3 +45,4 @@ export function getNeighbouringDistricts(district: string): string[] {
   );
   return matchKey ? KARNATAKA_DISTRICT_NEIGHBOURS[matchKey] : [];
 }
+

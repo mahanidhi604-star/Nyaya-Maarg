@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm --prefix civic-blindspot run dev",
-    "build": "npm --prefix civic-blindspot run build",
+    "build": "npm --prefix civic-blindspot run build && node scripts/copy-dist.mjs",
     "lint": "npm --prefix civic-blindspot run lint",
     "preview": "npm --prefix civic-blindspot run preview"
   },
