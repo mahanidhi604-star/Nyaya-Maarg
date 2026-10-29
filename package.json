@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm --prefix civic-blindspot run dev",
-    "build": "npm --prefix civic-blindspot run build && node scripts/copy-dist.mjs",
-    "lint": "npm --prefix civic-blindspot run lint",
-    "preview": "npm --prefix civic-blindspot run preview"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^2.31.0",
