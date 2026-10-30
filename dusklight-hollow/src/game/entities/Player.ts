@@ -146,3 +146,4 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return this.isMoving;
   }
 }
+

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <!-- Midnight Ink Base -->
+  <rect width="32" height="32" fill="#14172B" rx="6" />
+  <!-- Lantern Ring -->
+  <rect x="14" y="4" width="4" height="2" fill="#9AA7B8" />
+  <rect x="12" y="6" width="8" height="2" fill="#3B4A8C" />
+  <!-- Lantern Roof -->
+  <rect x="10" y="8" width="12" height="3" fill="#6B4A3A" />
+  <!-- Glass Chamber -->
+  <rect x="11" y="11" width="10" height="11" fill="#232850" />
+  <!-- Amber Flame -->
+  <rect x="14" y="13" width="4" height="6" fill="#F4B942" />
+  <rect x="15" y="14" width="2" height="4" fill="#F5FAFA" />
+  <!-- Lantern Base -->
+  <rect x="10" y="22" width="12" height="3" fill="#6B4A3A" />
+</svg>

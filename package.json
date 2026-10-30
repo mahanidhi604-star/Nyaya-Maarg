@@ -3,9 +3,15 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "workspaces": [
+    "dusklight-hollow"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "npm --prefix dusklight-hollow run dev",
-    "build": "npm --prefix dusklight-hollow run build",
+    "build": "npm --prefix dusklight-hollow install && npm --prefix dusklight-hollow run build && node scripts/copy-dist.mjs",
     "preview": "npm --prefix dusklight-hollow run preview"
   }
 }

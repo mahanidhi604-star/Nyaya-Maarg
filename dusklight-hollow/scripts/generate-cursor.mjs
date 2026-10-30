@@ -34,3 +34,4 @@ const cursorPath = path.resolve('dusklight-hollow', 'public', 'cursor-paw.svg');
 fs.mkdirSync(path.dirname(cursorPath), { recursive: true });
 fs.writeFileSync(cursorPath, svgCursor);
 console.log('Created cursor at:', cursorPath);
+

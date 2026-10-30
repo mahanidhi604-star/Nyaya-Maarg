@@ -156,3 +156,4 @@ export default class GameScene extends Phaser.Scene {
     this.player.update();
   }
 }
+

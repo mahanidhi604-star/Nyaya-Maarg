@@ -138,3 +138,4 @@ export default class TitleScene extends Phaser.Scene {
     this.cameras.main.fadeIn(400, 20, 23, 43);
   }
 }
+
