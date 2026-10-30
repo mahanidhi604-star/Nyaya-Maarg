@@ -1,0 +1,38 @@
+/* Dusklight Hollow - Pixel-perfect rendering styles */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #14172B; /* Midnight Ink - letterbox colour */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  cursor: url('/cursor-paw.svg') 4 4, default;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#game-container canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+}
+
